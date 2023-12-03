@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
@@ -20,6 +22,26 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // Foreign keys
+    @JsonIgnore
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn(name = "user_id")
+    private User user;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn(name = "enrollment_id")
+    private Enrollment enrollment;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn(name = "salary_id")
+    private Salary salary;
+
+    @ManyToOne
+    @JoinColumn(name = "position_id")
+    private Position jobPosition;
 
     @Column(name = "date_of_birth", nullable = false) 
     private LocalDate dateOfBirth;
@@ -44,17 +66,6 @@ public class Employee {
 
     @Column(length = 50, nullable = false) 
     private String street;
-
-    // Forein keys
-    @JsonIgnore
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn(name = "user_id")
-    private User user;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn(name = "enrollment_id")
-    private Enrollment enrollment;
 
     public Employee() {}
 

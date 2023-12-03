@@ -5,3 +5,4 @@ target/
 !**/src/test/**/target/
 mvnw
 mvnw.cmd
+src/main/resources/application.properties

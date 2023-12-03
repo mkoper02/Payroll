@@ -19,6 +19,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Foreign key
     @JsonIgnore
     @OneToOne 
     @MapsId

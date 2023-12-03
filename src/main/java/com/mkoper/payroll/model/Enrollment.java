@@ -21,10 +21,14 @@ public class Enrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    // Foreign keys
     @JsonIgnore
     @OneToOne
     @MapsId
     private Employee employee;
+
+    @OneToOne(mappedBy = "enrollment")
+    private Salary salary;
     
     @Column(name = "join_date", nullable = false) 
     private LocalDate joinDate;
