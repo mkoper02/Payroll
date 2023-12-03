@@ -21,6 +21,7 @@ public class EnrollmentController {
         this.enrollmentService = enrollmentService;
     }
 
+    // get all entrollments in the db
     @GetMapping("getall")
     public List<Enrollment> getEntrollments() {
         return enrollmentService.getEntrollments();

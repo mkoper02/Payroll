@@ -18,21 +18,22 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(length = 30, nullable = false) 
+    private String username;
+    
+    @Column(length = 30, nullable = false) 
+    private String password;
+    
+    @Column(name = "access_level", length = 50, nullable = true) 
+    private String accessLevel;
 
-    // Foreign key
+    // FOREIGN KEYS
+    // relation with employee table (shared primary key)
     @JsonIgnore
     @OneToOne 
     @MapsId
     private Employee employee;
-
-    @Column(length = 30, nullable = false) 
-    private String username;
-
-    @Column(length = 30, nullable = false) 
-    private String password;
-
-    @Column(name = "access_level", length = 50, nullable = true) 
-    private String accessLevel;
     
     public User() {}
     

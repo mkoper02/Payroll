@@ -1,6 +1,7 @@
 package com.mkoper.payroll.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
@@ -19,53 +21,68 @@ import jakarta.persistence.Table;
 @Entity
 @Table
 public class Employee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(name = "date_of_birth", nullable = false) 
+    private LocalDate dateOfBirth;
+    
+    @Column(name = "first_name", length = 50, nullable = false) 
+    private String firstName;
+    
+    @Column(name = "last_name", length = 50, nullable = false) 
+    private String lastName;
+    
+    @Column(length = 50, nullable = false) 
+    private String email;
+    
+    @Column(name = "phone_number", length = 9, nullable = false) 
+    private String phoneNumber;
+    
+    @Column(length = 50, nullable = false) 
+    private String country;
+    
+    @Column(length = 50, nullable = false) 
+    private String city;
+    
+    @Column(length = 50, nullable = false) 
+    private String street;
 
-    // Foreign keys
+    // FOREIGN KEYS
+    // relation with users table
     @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn(name = "user_id")
     private User user;
 
+    // relation with enrollment table
     @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn(name = "enrollment_id")
     private Enrollment enrollment;
 
+    // relation with salary table
     @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn(name = "salary_id")
     private Salary salary;
 
+    // relation with position table
     @ManyToOne
     @JoinColumn(name = "position_id")
     private Position jobPosition;
 
-    @Column(name = "date_of_birth", nullable = false) 
-    private LocalDate dateOfBirth;
+    // relation with working_hours_log table
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee")
+    private List<WorkingHoursLog> workLogs;
 
-    @Column(name = "first_name", length = 50, nullable = false) 
-    private String firstName;
-
-    @Column(name = "last_name", length = 50, nullable = false) 
-    private String lastName;
-
-    @Column(length = 50, nullable = false) 
-    private String email;
-
-    @Column(name = "phone_number", length = 9, nullable = false) 
-    private String phoneNumber;
-
-    @Column(length = 50, nullable = false) 
-    private String country;
-
-    @Column(length = 50, nullable = false) 
-    private String city;
-
-    @Column(length = 50, nullable = false) 
-    private String street;
+    // relation with payroll_raport table
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee")
+    private List<PayrollRaport> payrollRaports;
 
     public Employee() {}
 
@@ -179,11 +196,41 @@ public class Employee {
     public void setStreet(String street) {
         this.street = street;
     }
+    
+    public Salary getSalary() {
+        return salary;
+    }
+    
+    public void setSalary(Salary salary) {
+        this.salary = salary;
+    }
+    
+    public Position getJobPosition() {
+        return jobPosition;
+    }
+
+    public void setJobPosition(Position jobPosition) {
+        this.jobPosition = jobPosition;
+    }
+
+    public List<WorkingHoursLog> getWorkLogs() {
+        return workLogs;
+    }
+    
+    public void setWorkLogs(List<WorkingHoursLog> workLogs) {
+        this.workLogs = workLogs;
+    }
+    
+    public List<PayrollRaport> getPayrollRaports() {
+        return payrollRaports;
+    }
+    
+    public void setPayrollRaports(List<PayrollRaport> payrollRaports) {
+        this.payrollRaports = payrollRaports;
+    }
 
     @Override
     public String toString() {
-        return "Employee [id=" + id + ", dateOfBirth=" + dateOfBirth + ", firstName=" + firstName + ", lastName="
-                + lastName + ", email=" + email + ", phoneNumber=" + phoneNumber + ", country=" + country + ", city="
-                + city + ", street=" + street + ", user=" + user + ", enrollment=" + enrollment + "]";
+        return "Employee [id=" + id + ", dateOfBirth=" + dateOfBirth + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phoneNumber=" + phoneNumber + ", country=" + country + ", city=" + city + ", street=" + street + ", user=" + user + ", enrollment=" + enrollment + "]";
     }
 }   

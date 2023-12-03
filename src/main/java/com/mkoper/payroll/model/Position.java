@@ -23,12 +23,64 @@ public class Position {
     @Column(name = "name", length = 50, nullable = false)
     private String positionName;
 
-    // Foreign keys
+    // FOREIGN KEYS
+    // relation with department table
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
+    // relation with employee table
     @OneToMany(mappedBy = "jobPosition")
     private List<Employee> employees;
+    
+    public Position(Long id, String positionName, Department department, List<Employee> employees) {
+        this.id = id;
+        this.positionName = positionName;
+        this.department = department;
+        this.employees = employees;
+    }
+
+    public Position(String positionName, Department department, List<Employee> employees) {
+        this.positionName = positionName;
+        this.department = department;
+        this.employees = employees;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPositionName() {
+        return positionName;
+    }
+
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
+    }
+
+    @Override
+    public String toString() {
+        return "Position [id=" + id + ", positionName=" + positionName + ", department=" + department + ", employees=" + employees + "]";
+    }
 
 }

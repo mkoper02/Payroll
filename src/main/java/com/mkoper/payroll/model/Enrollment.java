@@ -16,28 +16,30 @@ import jakarta.persistence.Table;
 @Entity
 @Table
 public class Enrollment {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    // Foreign keys
+    @Column(name = "join_date", nullable = false) 
+    private LocalDate joinDate;
+    
+    @Column(name = "contract_type", length = 50, nullable = false) 
+    private String contractType;
+    
+    @Column(name = "hours_per_month", nullable = false) 
+    private Integer hours;  
+    
+    // FOREIGN KEYS      
+    // relation with employee table (shared primary key)
     @JsonIgnore
     @OneToOne
     @MapsId
     private Employee employee;
 
+    // relation with salary table
     @OneToOne(mappedBy = "enrollment")
     private Salary salary;
-    
-    @Column(name = "join_date", nullable = false) 
-    private LocalDate joinDate;
-
-    @Column(name = "contract_type", length = 50, nullable = false) 
-    private String contractType;
-
-    @Column(name = "hours_per_month", nullable = false) 
-    private Integer hours;  
     
     public Enrollment() {}
     
@@ -84,5 +86,26 @@ public class Enrollment {
 
     public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Salary getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Salary salary) {
+        this.salary = salary;
+    }
+   
+    @Override
+    public String toString() {
+        return "Enrollment [id=" + id + ", joinDate=" + joinDate + ", contractType=" + contractType + ", hours=" + hours + ", employee=" + employee + ", salary=" + salary + "]";
     }
 }
