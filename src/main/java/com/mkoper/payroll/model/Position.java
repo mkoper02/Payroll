@@ -33,6 +33,8 @@ public class Position {
     @OneToMany(mappedBy = "jobPosition")
     private List<Employee> employees;
     
+    public Position() {}
+
     public Position(Long id, String positionName, Department department, List<Employee> employees) {
         this.id = id;
         this.positionName = positionName;

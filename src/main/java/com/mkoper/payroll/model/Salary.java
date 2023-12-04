@@ -56,6 +56,8 @@ public class Salary {
     @OneToMany(mappedBy = "salary")
     private List<PayrollRaport> payrollRaports;
 
+    public Salary() {}
+
     public Salary(Long id, Float grossSalary, Float netSalary, Employee employee, Enrollment enrollment, List<Tax> salaryTaxes, List<PayrollRaport> payrollRaports) {
         this.id = id;
         this.grossSalary = grossSalary;

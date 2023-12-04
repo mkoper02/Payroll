@@ -38,6 +38,8 @@ public class WorkingHoursLog {
     @OneToOne(mappedBy = "workingLog")
     private PayrollRaport payrollRaport;
 
+    public WorkingHoursLog() {}
+
     public WorkingHoursLog(Long id, Integer hoursWorked, LocalDate date, Employee employee, PayrollRaport payrollRaport) {
         this.id = id;
         this.hoursWorked = hoursWorked;

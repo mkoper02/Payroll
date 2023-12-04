@@ -57,6 +57,8 @@ public class PayrollRaport {
     )
     private List<Benefit> payrollraportBenefits;
     
+    public PayrollRaport() {}
+
     public PayrollRaport(Long id, LocalDate date, Float bonus, Float totalAmount, Employee employee, WorkingHoursLog workingLog, Salary salary, List<Benefit> payrollraportBenefits) {
         this.id = id;
         this.date = date;

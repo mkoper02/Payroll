@@ -35,6 +35,8 @@ public class Department {
     @OneToMany(mappedBy = "department")
     private List<Position> jobPositions;
     
+    public Department() {}
+
     public Department(Long id, String departmentName, String country, String city, String street, List<Position> jobPositions) {
         this.id = id;
         this.departmentName = departmentName;

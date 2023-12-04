@@ -29,6 +29,8 @@ public class Benefit {
     @ManyToMany(mappedBy = "payrollraportBenefits")
     private List<PayrollRaport> benefitsPayrollraport;
     
+    public Benefit() {}
+
     public Benefit(Long id, String benefitName, Float benefitCost, List<PayrollRaport> benefitsPayrollraport) {
         this.id = id;
         this.benefitName = benefitName;

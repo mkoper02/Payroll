@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.mkoper.payroll.model.Employee;
 
-
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     

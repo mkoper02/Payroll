@@ -29,6 +29,8 @@ public class Tax {
     @ManyToMany(mappedBy = "salaryTaxes")
     private List<Salary> taxedSalary;    
 
+    public Tax() {}
+
     public Tax(Long id, String taxName, Float taxAmount, List<Salary> taxedSalary) {
         this.id = id;
         this.taxName = taxName;
