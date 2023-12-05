@@ -2,6 +2,8 @@ package com.mkoper.payroll.model;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -22,6 +24,7 @@ public class Enrollment {
     private Long id;
     
     @Column(name = "join_date", nullable = false) 
+    @CreationTimestamp
     private LocalDate joinDate;
     
     @Column(name = "contract_type", length = 50, nullable = false) 
