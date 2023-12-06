@@ -2,6 +2,8 @@ package com.mkoper.payroll.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,10 +28,11 @@ public class Position {
     // FOREIGN KEYS
     // relation with department table
     @ManyToOne
-    @JoinColumn(name = "department_id", nullable = false)
+    @JoinColumn(name = "department_id", nullable = true)
     private Department department;
 
     // relation with employee table
+    @JsonIgnore
     @OneToMany(mappedBy = "jobPosition")
     private List<Employee> employees;
     

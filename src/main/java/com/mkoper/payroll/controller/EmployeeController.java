@@ -30,30 +30,30 @@ public class EmployeeController {
 	// get all employees in the db
 	@GetMapping("employee")
 	public List<EmployeeDto> getEmployees() {
-		return employeeService.findAll();
+		return employeeService.getAll();
 	}
 	// get employee with given id
-	@GetMapping("employee/{id}")
-	public ResponseEntity<EmployeeDto> getEmployeeId(@PathVariable Long id) {
-		return ResponseEntity.ok(employeeService.findEmployeeById(id));
+	@GetMapping("employee/{employeeId}")
+	public ResponseEntity<EmployeeDto> getEmployeeId(@PathVariable Long employeeId) {
+		return ResponseEntity.ok(employeeService.getEmployeeById(employeeId));
 	}
 
 	// add employee to the db
 	@PostMapping("employee/create")
-	public Employee addEmployee(@RequestBody Employee employee) {
-		return employeeService.saveEmployee(employee);
+	public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
+		return new ResponseEntity<>(employeeService.saveEmployee(employee), HttpStatus.CREATED);
 	}
 
 	// update employee data in the db
-	@PutMapping("employee/{id}/update")
-	public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable("id") Long id) {
-		return new ResponseEntity<>(employeeService.updateEmployee(employeeDto, id), HttpStatus.OK);
+	@PutMapping("employee/{employeeId}/update")
+	public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable("id") Long employeeId) {
+		return new ResponseEntity<>(employeeService.updateEmployee(employeeDto, employeeId), HttpStatus.OK);
 	}
 
 	// delete employee data from the db
-	@DeleteMapping("employee/{id}/delete")
-	public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long id) {
-		employeeService.deleteEmployeeId(id);
+	@DeleteMapping("employee/{employeeId}/delete")
+	public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long employeeId) {
+		employeeService.deleteEmployeeId(employeeId);
 		return new ResponseEntity<>("Employee deleted", HttpStatus.OK);
 	}
 }

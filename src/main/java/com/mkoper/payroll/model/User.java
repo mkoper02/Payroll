@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,8 +28,9 @@ public class User {
     @Column(length = 30, nullable = false) 
     private String password;
     
-    @Column(name = "access_level", length = 50, nullable = true) 
-    private String accessLevel;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "access_level", nullable = false) 
+    private UserAccessLevel accessLevel;
 
     // FOREIGN KEYS
     // relation with employee table (shared primary key)
@@ -38,14 +41,14 @@ public class User {
     
     public User() {}
     
-    public User(Long id, String username, String password, String accessLevel) {
+    public User(Long id, String username, String password, UserAccessLevel accessLevel) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.accessLevel = accessLevel;
     }    
     
-    public User(String username, String password, String accessLevel) {
+    public User(String username, String password, UserAccessLevel accessLevel) {
         this.username = username;
         this.password = password;
         this.accessLevel = accessLevel;
@@ -75,11 +78,11 @@ public class User {
         this.password = password;
     }
     
-    public String getAccessLevel() {
+    public UserAccessLevel getAccessLevel() {
         return accessLevel;
     }
     
-    public void setAccessLevel(String accessLevel) {
+    public void setAccessLevel(UserAccessLevel accessLevel) {
         this.accessLevel = accessLevel;
     }
     

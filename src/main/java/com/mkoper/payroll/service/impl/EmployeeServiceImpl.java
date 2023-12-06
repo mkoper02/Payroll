@@ -21,7 +21,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDto> findAll() {
+    public List<EmployeeDto> getAll() {
         List<Employee> employees = employeeRepository.findAll();
 
         // use dto to dont show password etc.
@@ -29,23 +29,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto findEmployeeById(Long employeeId) {
+    public EmployeeDto getEmployeeById(Long employeeId) {
         Employee employee = employeeRepository.findById((long)employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
         return mapToEmployeeDto(employee);
     }
 
     @Override
     public EmployeeDto updateEmployee(EmployeeDto employeeDto, Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+        employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
 
-        employee.setDateOfBirth(employeeDto.getDateOfBirth());
-        employee.setDateOfBirth(employeeDto.getDateOfBirth());
-        employee.setFirstName(employeeDto.getFirstName());
-        employee.setLastName(employeeDto.getLastName());
-        employee.setEmail(employeeDto.getEmail());
-        employee.setPhoneNumber(employeeDto.getPhoneNumber());
-
-        Employee updatedEmployee = employeeRepository.save(employee);
+        Employee updatedEmployee = employeeRepository.save(mapToEntity(employeeDto));
         return mapToEmployeeDto(updatedEmployee);
     }
 
@@ -74,17 +67,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDto;
     }
 
-    // private Employee mapToEntity(EmployeeDto employeeDto) {
-    //     Employee employee = new Employee();
+    private Employee mapToEntity(EmployeeDto employeeDto) {
+        Employee employee = new Employee();
 
-    //     employee.setId(employeeDto.getId());
-    //     employee.setDateOfBirth(employeeDto.getDateOfBirth());
-    //     employee.setFirstName(employeeDto.getFirstName());
-    //     employee.setLastName(employeeDto.getLastName());
-    //     employee.setEmail(employeeDto.getEmail());
-    //     employee.setPhoneNumber(employeeDto.getPhoneNumber());
-    //     employee.setJobPosition(employeeDto.getJobPosition());
+        employee.setId(employeeDto.getId());
+        employee.setDateOfBirth(employeeDto.getDateOfBirth());
+        employee.setFirstName(employeeDto.getFirstName());
+        employee.setLastName(employeeDto.getLastName());
+        employee.setEmail(employeeDto.getEmail());
+        employee.setPhoneNumber(employeeDto.getPhoneNumber());
+        employee.setJobPosition(employeeDto.getJobPosition());
 
-    //     return employee;
-    // }
+        return employee;
+    }
 }

@@ -13,9 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Search for user with given username
     User findByUsername(String username);
 
-    // Search for user with given ID
-    User findById(long id);
-
     // Search for users with given access level
     List<User> findByAccessLevel(String accessLevel);
 

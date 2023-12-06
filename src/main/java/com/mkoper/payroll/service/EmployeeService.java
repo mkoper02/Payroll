@@ -7,10 +7,10 @@ import com.mkoper.payroll.model.Employee;
 
 public interface EmployeeService {
 	// Return all data in Employee class
-	List<EmployeeDto> findAll();
+	List<EmployeeDto> getAll();
 
 	// Return employee data with given ID
-	EmployeeDto findEmployeeById(Long employeeId);
+	EmployeeDto getEmployeeById(Long employeeId);
 
 	// Save new employee to the db
 	Employee saveEmployee(Employee employee);
