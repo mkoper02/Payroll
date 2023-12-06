@@ -26,7 +26,7 @@ public class PayrollRaport {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Float bonus;
 
     @Column(name = "total_amount", nullable = false)
