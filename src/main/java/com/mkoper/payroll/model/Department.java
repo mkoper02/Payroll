@@ -2,6 +2,8 @@ package com.mkoper.payroll.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,7 @@ public class Department {
     
     // FOREIGN KEYS
     // relation with posiotion table
+    @JsonIgnore
     @OneToMany(mappedBy = "department")
     private List<Position> jobPositions;
     

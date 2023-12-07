@@ -22,11 +22,11 @@ public class PayrollRaportController {
 
     @GetMapping("employee/{employeeId}/payrollraports")
     public List<PayrollRaportDto> getPayrollRaportsByEmployeeId(@PathVariable Long employeeId) {
-        return payrollRaportService.getPayrollRaportByEmployeeID(employeeId);
+        return payrollRaportService.getPayrollRaportsByEmployeeID(employeeId);
     }
 
     @GetMapping("employee/{employeeId}/payrollraports/{year}")
     public List<PayrollRaportDto> getPayrollRaportByYear(@PathVariable Integer year, @PathVariable Long employeeId) {
-        return payrollRaportService.getPayrollRaportByYear(year, employeeId); 
+        return payrollRaportService.getPayrollRaportsByYear(year, employeeId); 
     }
 }

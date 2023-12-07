@@ -73,7 +73,7 @@ public class Employee {
 
     // relation with position table
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "position_id")
     private Position jobPosition;
 

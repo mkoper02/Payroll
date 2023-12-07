@@ -2,8 +2,6 @@ package com.mkoper.payroll.dto;
 
 import java.time.LocalDate;
 
-import com.mkoper.payroll.model.Position;
-
 public class EmployeeDto {
     private Long id;
     private LocalDate dateOfBirth;
@@ -11,7 +9,7 @@ public class EmployeeDto {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private Position jobPosition;
+    private PositionDto jobPosition;
 
     public EmployeeDto() {}
 
@@ -72,11 +70,11 @@ public class EmployeeDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public Position getJobPosition() {
+    public PositionDto getJobPosition() {
         return jobPosition;
     }
 
-    public void setJobPosition(Position jobPosition) {
+    public void setJobPosition(PositionDto jobPosition) {
         this.jobPosition = jobPosition;
     }
 }

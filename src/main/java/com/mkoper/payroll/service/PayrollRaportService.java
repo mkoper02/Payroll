@@ -6,8 +6,8 @@ import com.mkoper.payroll.dto.PayrollRaportDto;
 
 public interface PayrollRaportService {
     // get list of all payroll raports for employee with given ID
-    List<PayrollRaportDto> getPayrollRaportByEmployeeID(Long employeeId);
+    List<PayrollRaportDto> getPayrollRaportsByEmployeeID(Long employeeId);
 
     // get list of payroll raports for employee with given ID for given year
-    List<PayrollRaportDto> getPayrollRaportByYear(Integer year, Long employeeId);
+    List<PayrollRaportDto> getPayrollRaportsByYear(Integer year, Long employeeId);
 }

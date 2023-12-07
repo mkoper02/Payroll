@@ -1,6 +1,6 @@
 package com.mkoper.payroll.service.impl;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,22 +21,15 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
     }
 
     @Override
-    public List<PayrollRaportDto> getPayrollRaportByEmployeeID(Long employeeId) {
+    public List<PayrollRaportDto> getPayrollRaportsByEmployeeID(Long employeeId) {
         List<PayrollRaport> payrollRaports = payrollRaportRepository.findByEmployeeId(employeeId);
         return payrollRaports.stream().map((payrollRaport) -> mapToPayrollRaportDto(payrollRaport)).collect(Collectors.toList());
     }
 
     @Override
-    public List<PayrollRaportDto> getPayrollRaportByYear(Integer year, Long employeeId) {
-        List<PayrollRaportDto> payrollRaports = getPayrollRaportByEmployeeID(employeeId);
-        List<PayrollRaportDto> finalPayrollRaports = new ArrayList<>();
-
-        for (int i = 0; i < payrollRaports.size(); i++) {
-            if (payrollRaports.get(i).getDate().getYear() == year) 
-                finalPayrollRaports.add(payrollRaports.get(i));
-        }
-
-        return finalPayrollRaports;
+    public List<PayrollRaportDto> getPayrollRaportsByYear(Integer year, Long employeeId) {
+        List<PayrollRaport> payrollRaportsBetweenDates = payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(year, 01, 01), LocalDate.of(year, 12, 31), employeeId);
+        return payrollRaportsBetweenDates.stream().map((payrollRaport) -> mapToPayrollRaportDto(payrollRaport)).collect(Collectors.toList());
     }
 
     private PayrollRaportDto mapToPayrollRaportDto(PayrollRaport payrollRaport) {

@@ -1,5 +1,6 @@
 package com.mkoper.payroll.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,5 @@ public interface PayrollRaportRepository extends JpaRepository<PayrollRaport, Lo
 
     List<PayrollRaport> findByEmployeeId(Long employeeID);
 
+    List<PayrollRaport> findByDateBetweenAndEmployeeId(LocalDate start, LocalDate end, Long employeeId);
 }
