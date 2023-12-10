@@ -1,19 +1,18 @@
 package com.mkoper.payroll.repository;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.mkoper.payroll.model.User;
+import com.mkoper.payroll.model.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
     
     // Search for user with given username
-    User findByUsername(String username);
+    Optional<UserEntity> findByUsername(String username);
 
-    // Search for users with given access level
-    List<User> findByAccessLevel(String accessLevel);
-
+    // Check if user with given username exist in the db
+    Boolean existsByUsername(String username);
 }

@@ -69,10 +69,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDto.setEmail(employee.getEmail());
         employeeDto.setPhoneNumber(employee.getPhoneNumber());
 
-        PositionDto positionDto = new PositionDto();
-        positionDto.setPositionName(employee.getJobPosition().getPositionName());
-        positionDto.setDepartment(new DepartmentDto(employee.getJobPosition().getDepartment().getDepartmentName()));
-        employeeDto.setJobPosition(positionDto);
+        try {
+            PositionDto positionDto = new PositionDto();
+            positionDto.setPositionName(employee.getJobPosition().getName());
+            positionDto.setDepartment(new DepartmentDto(employee.getJobPosition().getDepartment().getName()));
+            employeeDto.setJobPosition(positionDto);
+        } catch (Exception e) {}
 
         return employeeDto;
     }

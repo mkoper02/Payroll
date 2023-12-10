@@ -1,14 +1,18 @@
 package com.mkoper.payroll.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -16,7 +20,7 @@ import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,30 +32,35 @@ public class User {
     @Column(length = 30, nullable = false) 
     private String password;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "access_level", nullable = false) 
-    private UserAccessLevel accessLevel;
-
     // FOREIGN KEYS
+    // relation with roles table
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable (
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
+
     // relation with employee table (shared primary key)
     @JsonIgnore
     @OneToOne 
     @MapsId
     private Employee employee;
     
-    public User() {}
+    public UserEntity() {}
     
-    public User(Long id, String username, String password, UserAccessLevel accessLevel) {
+    public UserEntity(Long id, String username, String password, List<Role> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.accessLevel = accessLevel;
+        this.roles = roles;
     }    
     
-    public User(String username, String password, UserAccessLevel accessLevel) {
+    public UserEntity(String username, String password, List<Role> roles) {
         this.username = username;
         this.password = password;
-        this.accessLevel = accessLevel;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -78,12 +87,12 @@ public class User {
         this.password = password;
     }
     
-    public UserAccessLevel getAccessLevel() {
-        return accessLevel;
+    public List<Role> getRole() {
+        return roles;
     }
     
-    public void setAccessLevel(UserAccessLevel accessLevel) {
-        this.accessLevel = accessLevel;
+    public void setRole(List<Role> roles) {
+        this.roles = roles;
     }
     
     public Employee getEmployee() {
@@ -92,10 +101,5 @@ public class User {
     
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", username=" + username + ", password=" + password + ", accessLevel=" + accessLevel + ", employee=" + employee + "]";
     }
 }

@@ -57,7 +57,7 @@ public class Employee {
     @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     // relation with enrollment table
     @JsonIgnore
@@ -120,11 +120,11 @@ public class Employee {
         id = this.id;
     }
 
-    public User getUser() {
+    public UserEntity getUserEntity() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUserEntity(UserEntity user) {
         this.user = user;
     }
 

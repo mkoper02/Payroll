@@ -22,7 +22,7 @@ public class PayrollRaportController {
 
     @GetMapping("employee/{employeeId}/payrollraports")
     public List<PayrollRaportDto> getPayrollRaportsByEmployeeId(@PathVariable Long employeeId) {
-        return payrollRaportService.getPayrollRaportsByEmployeeID(employeeId);
+        return payrollRaportService.getPayrollRaportsByEmployeeId(employeeId);
     }
 
     @GetMapping("employee/{employeeId}/payrollraports/{year}")

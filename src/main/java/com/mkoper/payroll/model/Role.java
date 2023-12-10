@@ -8,30 +8,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table
-public class Benefit {
+@Table(name = "roles")
+public class Role {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(length = 50, nullable = false)
-    private String name;
-    
-    @Column(nullable = false)
-    private Float cost;
-    
-    public Benefit() {}
 
-    public Benefit(Long id, String name, Float cost) {
+    @Column(name = "name", length = 15, nullable = false)
+    private String name;
+
+    public Role() {}
+
+    public Role(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.cost = cost;
-    }
-    
-    public Benefit(String name, Float cost) {
-        this.name = name;
-        this.cost = cost;
     }
 
     public Long getId() {
@@ -48,13 +39,5 @@ public class Benefit {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Float getCost() {
-        return cost;
-    }
-
-    public void setCost(Float cost) {
-        this.cost = cost;
     }
 }

@@ -20,8 +20,8 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name", length = 50, nullable = false)
-    private String departmentName;
+    @Column(length = 50, nullable = false)
+    private String name;
     
     @Column(length = 50, nullable = false) 
     private String country;
@@ -40,17 +40,17 @@ public class Department {
     
     public Department() {}
 
-    public Department(Long id, String departmentName, String country, String city, String street, List<Position> jobPositions) {
+    public Department(Long id, String name, String country, String city, String street, List<Position> jobPositions) {
         this.id = id;
-        this.departmentName = departmentName;
+        this.name = name;
         this.country = country;
         this.city = city;
         this.street = street;
         this.jobPositions = jobPositions;
     }
     
-    public Department(String departmentName, String country, String city, String street, List<Position> jobPositions) {
-        this.departmentName = departmentName;
+    public Department(String name, String country, String city, String street, List<Position> jobPositions) {
+        this.name = name;
         this.country = country;
         this.city = city;
         this.street = street;
@@ -65,12 +65,12 @@ public class Department {
         this.id = id;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public String getName() {
+        return name;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCountry() {
@@ -103,10 +103,5 @@ public class Department {
 
     public void setJobPositions(List<Position> jobPositions) {
         this.jobPositions = jobPositions;
-    }
-
-    @Override
-    public String toString() {
-        return "Department [id=" + id + ", departmentName=" + departmentName + ", country=" + country + ", city=" + city + ", street=" + street + ", jobPositions=" + jobPositions + "]";
     }
 }

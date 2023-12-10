@@ -11,7 +11,7 @@ import com.mkoper.payroll.model.PayrollRaport;
 @Repository
 public interface PayrollRaportRepository extends JpaRepository<PayrollRaport, Long> {
 
-    List<PayrollRaport> findByEmployeeId(Long employeeID);
+    List<PayrollRaport> findByEmployeeId(Long employeeId);
 
     List<PayrollRaport> findByDateBetweenAndEmployeeId(LocalDate start, LocalDate end, Long employeeId);
 }

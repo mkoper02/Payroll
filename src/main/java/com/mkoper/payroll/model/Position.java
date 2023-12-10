@@ -22,8 +22,8 @@ public class Position {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", length = 50, nullable = false)
-    private String positionName;
+    @Column(length = 50, nullable = false)
+    private String name;
 
     // FOREIGN KEYS
     // relation with department table
@@ -38,15 +38,15 @@ public class Position {
     
     public Position() {}
 
-    public Position(Long id, String positionName, Department department, List<Employee> employees) {
+    public Position(Long id, String name, Department department, List<Employee> employees) {
         this.id = id;
-        this.positionName = positionName;
+        this.name = name;
         this.department = department;
         this.employees = employees;
     }
 
-    public Position(String positionName, Department department, List<Employee> employees) {
-        this.positionName = positionName;
+    public Position(String name, Department department, List<Employee> employees) {
+        this.name = name;
         this.department = department;
         this.employees = employees;
     }
@@ -59,12 +59,12 @@ public class Position {
         this.id = id;
     }
 
-    public String getPositionName() {
-        return positionName;
+    public String getName() {
+        return name;
     }
 
-    public void setPositionName(String positionName) {
-        this.positionName = positionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Department getDepartment() {
@@ -82,10 +82,4 @@ public class Position {
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
-
-    @Override
-    public String toString() {
-        return "Position [id=" + id + ", positionName=" + positionName + ", department=" + department + ", employees=" + employees + "]";
-    }
-
 }

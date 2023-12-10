@@ -21,7 +21,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
     }
 
     @Override
-    public List<PayrollRaportDto> getPayrollRaportsByEmployeeID(Long employeeId) {
+    public List<PayrollRaportDto> getPayrollRaportsByEmployeeId(Long employeeId) {
         List<PayrollRaport> payrollRaports = payrollRaportRepository.findByEmployeeId(employeeId);
         return payrollRaports.stream().map((payrollRaport) -> mapToPayrollRaportDto(payrollRaport)).collect(Collectors.toList());
     }
