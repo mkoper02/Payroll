@@ -21,8 +21,12 @@ public class SecurityConfig {
     @Autowired 
     private JwtAuthEntryPoint authEntryPoint;
 
-    public SecurityConfig(JwtAuthEntryPoint authEntryPoint) {
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(JwtAuthEntryPoint authEntryPoint, CustomUserDetailsService userDetailsService) {
         this.authEntryPoint = authEntryPoint;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -32,8 +36,10 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests((authorize) -> 
-                authorize.requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("employee/**").permitAll()
+                authorize.requestMatchers( "/auth/login").permitAll()
+                    .requestMatchers("/auth/register").hasRole("ADMIN")
+                    .requestMatchers("/employee").hasRole("ADMIN")
+                    .requestMatchers("/employee/**").hasAnyRole("ADMIN", "MODERATOR", "USER")
                     .anyRequest()
                     .authenticated())
             .httpBasic(Customizer.withDefaults());
@@ -44,8 +50,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 

@@ -36,8 +36,8 @@ public class EmployeeController {
 	}
 	
 	// get employee with given id
-	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("employee/{employeeId}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<EmployeeDto> getEmployeeId(@PathVariable Long employeeId) {
 		return ResponseEntity.ok(employeeService.getEmployeeById(employeeId));
 	}

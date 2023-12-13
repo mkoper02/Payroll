@@ -1,5 +1,6 @@
 package com.mkoper.payroll.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,7 +41,7 @@ public class UserEntity {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> role;
+    private List<Role> role = new ArrayList<>();
 
     // relation with employee table (shared primary key)
     @JsonIgnore
