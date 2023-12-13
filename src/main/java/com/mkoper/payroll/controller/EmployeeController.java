@@ -2,8 +2,10 @@ package com.mkoper.payroll.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import com.mkoper.payroll.service.EmployeeService;
 @RestController
 public class EmployeeController {
     
+	@Autowired 
 	private EmployeeService employeeService;
 
 	public EmployeeController(EmployeeService employeeService) {
@@ -27,11 +30,13 @@ public class EmployeeController {
 
 	// get all employees in the db
 	@GetMapping("employee")
+	@PreAuthorize("hasRole('ADMIN')")
 	public List<EmployeeDto> getEmployees() {
 		return employeeService.getAll();
 	}
 	
 	// get employee with given id
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("employee/{employeeId}")
 	public ResponseEntity<EmployeeDto> getEmployeeId(@PathVariable Long employeeId) {
 		return ResponseEntity.ok(employeeService.getEmployeeById(employeeId));

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.PayrollRaportDto;
@@ -14,6 +15,7 @@ import com.mkoper.payroll.service.PayrollRaportService;
 @Service
 public class PayrollRaportServiceImpl implements PayrollRaportService {
     
+    @Autowired 
     private PayrollRaportRepository payrollRaportRepository;
 
     public PayrollRaportServiceImpl(PayrollRaportRepository payrollRaportRepository){

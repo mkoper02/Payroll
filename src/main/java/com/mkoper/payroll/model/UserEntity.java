@@ -29,7 +29,7 @@ public class UserEntity {
     @Column(length = 30, nullable = false) 
     private String username;
     
-    @Column(length = 50, nullable = false) 
+    @Column(nullable = false) 
     private String password;
     
     // FOREIGN KEYS
@@ -40,7 +40,7 @@ public class UserEntity {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private List<Role> role;
 
     // relation with employee table (shared primary key)
     @JsonIgnore
@@ -50,17 +50,17 @@ public class UserEntity {
     
     public UserEntity() {}
     
-    public UserEntity(Long id, String username, String password, List<Role> roles) {
+    public UserEntity(Long id, String username, String password, List<Role> role) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        this.role = role;
     }    
     
-    public UserEntity(String username, String password, List<Role> roles) {
+    public UserEntity(String username, String password, List<Role> role) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        this.role = role;
     }
 
     public Long getId() {
@@ -88,11 +88,11 @@ public class UserEntity {
     }
     
     public List<Role> getRole() {
-        return roles;
+        return role;
     }
     
-    public void setRole(List<Role> roles) {
-        this.roles = roles;
+    public void setRole(List<Role> role) {
+        this.role = role;
     }
     
     public Employee getEmployee() {

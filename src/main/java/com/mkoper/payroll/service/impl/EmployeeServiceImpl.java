@@ -3,6 +3,7 @@ package com.mkoper.payroll.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.DepartmentDto;
@@ -16,6 +17,7 @@ import com.mkoper.payroll.service.EmployeeService;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     
+    @Autowired 
     private EmployeeRepository employeeRepository;
     
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
