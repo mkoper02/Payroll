@@ -1,18 +1,20 @@
 package com.mkoper.payroll.dto;
 
+import java.util.List;
+
 import com.mkoper.payroll.model.Role;
 
 public class UserDto {
     private Long id;
     private String username;
-    private Role accessLevel;
+    private List<Role> roles;
 
     public UserDto() {}
 
-    public UserDto(Long id, String username, Role accessLevel) {
+    public UserDto(Long id, String username, List<Role> roles) {
         this.id = id;
         this.username = username;
-        this.accessLevel = accessLevel;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -31,11 +33,11 @@ public class UserDto {
         this.username = username;
     }
 
-    public Role getAccessLevel() {
-        return accessLevel;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setAccessLevel(Role accessLevel) {
-        this.accessLevel = accessLevel;
+    public void setToles(List<Role> roles) {
+        this.roles = roles;
     }
 }

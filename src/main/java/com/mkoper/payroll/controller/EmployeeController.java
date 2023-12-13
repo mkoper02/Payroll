@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mkoper.payroll.dto.EmployeeDto;
@@ -18,7 +17,6 @@ import com.mkoper.payroll.model.Employee;
 import com.mkoper.payroll.service.EmployeeService;
 
 @RestController
-@RequestMapping(path = "api/")
 public class EmployeeController {
     
 	private EmployeeService employeeService;

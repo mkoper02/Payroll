@@ -29,7 +29,7 @@ public class UserEntity {
     @Column(length = 30, nullable = false) 
     private String username;
     
-    @Column(length = 30, nullable = false) 
+    @Column(length = 50, nullable = false) 
     private String password;
     
     // FOREIGN KEYS

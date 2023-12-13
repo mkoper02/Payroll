@@ -7,17 +7,17 @@ import com.mkoper.payroll.model.Employee;
 
 public interface EmployeeService {
 	// Return all data in Employee class
-	List<EmployeeDto> getAll();
+	public List<EmployeeDto> getAll();
 
 	// Return employee data with given ID
-	EmployeeDto getEmployeeById(Long employeeId);
+	public EmployeeDto getEmployeeById(Long employeeId);
 
 	// Save new employee to the db
-	Employee saveEmployee(Employee employee);
+	public Employee saveEmployee(Employee employee);
 
 	// Update employee data
-	EmployeeDto updateEmployee(EmployeeDto employeeDto, Long id);
+	public EmployeeDto updateEmployee(EmployeeDto employeeDto, Long id);
 
 	// Delete employee from the db
-	void deleteEmployeeId(Long id);
+	public void deleteEmployeeId(Long id);
 }

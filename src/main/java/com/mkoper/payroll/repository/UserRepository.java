@@ -10,6 +10,9 @@ import com.mkoper.payroll.model.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     
+    // Search for user with given ID
+    Optional<UserEntity> findByEmployeeId(Long id);
+
     // Search for user with given username
     Optional<UserEntity> findByUsername(String username);
 
