@@ -3,8 +3,10 @@ package com.mkoper.payroll.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mkoper.payroll.dto.PayrollRaportDto;
@@ -28,5 +30,11 @@ public class PayrollRaportController {
     @GetMapping("employee/{employeeId}/payrollraports/{year}")
     public List<PayrollRaportDto> getPayrollRaportByYear(@PathVariable Integer year, @PathVariable Long employeeId) {
         return payrollRaportService.getPayrollRaportsByYear(year, employeeId); 
+    }
+
+    @PutMapping("payrollraport/create/allemployees")
+    public ResponseEntity<PayrollRaportDto> addPayrollRaport() {
+        // TODO: give signal to create payroll raports for all employees for given month and year
+        return null;
     }
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,14 +29,12 @@ public class EmployeeController {
 
 	// get all employees in the db
 	@GetMapping("employee")
-	@PreAuthorize("hasRole('ADMIN')")
 	public List<EmployeeDto> getEmployees() {
 		return employeeService.getAll();
 	}
 	
 	// get employee with given id
 	@GetMapping("employee/{employeeId}")
-	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<EmployeeDto> getEmployeeId(@PathVariable Long employeeId) {
 		return ResponseEntity.ok(employeeService.getEmployeeById(employeeId));
 	}
@@ -49,15 +46,18 @@ public class EmployeeController {
 	}
 
 	// update employee data in the db
-	@PutMapping("employee/{employeeId}/update")
+	@PutMapping("employee/update/{employeeId}")
 	public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable("employeeId") Long employeeId) {
 		return new ResponseEntity<>(employeeService.updateEmployee(employeeDto, employeeId), HttpStatus.OK);
 	}
 
 	// delete employee data from the db
-	@DeleteMapping("employee/{employeeId}/delete")
+	@DeleteMapping("employee/delete/{employeeId}")
 	public ResponseEntity<String> deleteEmployee(@PathVariable("employeeId") Long employeeId) {
 		employeeService.deleteEmployeeId(employeeId);
+
+		// TODO: when delete an employee we also delete the salary, enrollment, etc. Add delete service for other models
+
 		return new ResponseEntity<>("Employee deleted", HttpStatus.OK);
 	}
 }

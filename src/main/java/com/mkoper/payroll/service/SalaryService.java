@@ -14,6 +14,9 @@ public interface SalaryService {
     // update salary with given employee ID
     public SalaryDto updateSalary(SalaryDto salaryDto, Long employeeId);
 
+    // save new salary to the db
+    public SalaryDto saveSalary(SalaryDto salaryDto);
+
     // delete from the db
-    // public void deleteSalaryId(Long employeeId);
+    public void deleteSalary(Long employeeId);
 }

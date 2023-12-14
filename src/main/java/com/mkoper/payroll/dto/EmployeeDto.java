@@ -9,7 +9,7 @@ public class EmployeeDto {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private PositionDto jobPosition;
+    private String jobPosition;
 
     public EmployeeDto() {}
 
@@ -70,11 +70,11 @@ public class EmployeeDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public PositionDto getJobPosition() {
+    public String getJobPosition() {
         return jobPosition;
     }
 
-    public void setJobPosition(PositionDto jobPosition) {
+    public void setJobPosition(String jobPosition) {
         this.jobPosition = jobPosition;
     }
 }

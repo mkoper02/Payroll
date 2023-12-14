@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mkoper.payroll.dto.UserDto;
 import com.mkoper.payroll.service.UserService;
 
 @RestController
-@RequestMapping("user")
 public class UserController {
 
     @Autowired 
@@ -24,19 +22,20 @@ public class UserController {
     }
 
     // Get all users
-    @GetMapping("")
+    @GetMapping("user")
     public List<UserDto> getUsers() {
         return userService.getAll();
     }
 
     // Get user with given ID
-    @GetMapping("/id={userId}")
+    @GetMapping("user/id={userId}")
     public ResponseEntity<UserDto> getUserId(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<UserDto> getUserUsername(@PathVariable("username") String username){
+    // Get user with given username
+    @GetMapping("user/{username}")
+    public ResponseEntity<UserDto> getUserUsername(@PathVariable("username") String username) {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 }

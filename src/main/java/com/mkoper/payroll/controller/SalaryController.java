@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,17 +25,26 @@ public class SalaryController {
         this.salaryService = salaryService;
     }
 
-    @GetMapping("employee/salary/{employeeId}")
-    public ResponseEntity<SalaryDto> getSalaryByEmployeeId(Long employeeId) {
+    // get salary of employee with given ID
+    @GetMapping("employee/{employeeId}/salary")
+    public ResponseEntity<SalaryDto> getSalaryByEmployeeId(@PathVariable Long employeeId) {
         return ResponseEntity.ok(salaryService.getByEmployeeId(employeeId));
     }
 
-    @GetMapping("employee/salary")
+    // get all salaries
+    @GetMapping("salary")
     public List<SalaryDto> getSalaries() {
         return salaryService.getAll();
     }
 
-    @PutMapping("employee/salary/{employeeId}/update")
+    // create salary for employee with given ID
+    @PostMapping("salary/create")
+    public ResponseEntity<SalaryDto> addSalary(@RequestBody SalaryDto salaryDto) {
+        return new ResponseEntity<>(salaryService.saveSalary(salaryDto), HttpStatus.CREATED);
+    }
+
+    // upadte gross salary of employee with given ID
+    @PutMapping("salary/update/{employeeId}")
     public ResponseEntity<SalaryDto> updateSalary(@RequestBody SalaryDto salaryDto, @PathVariable Long employeeId) {
         return new ResponseEntity<>(salaryService.updateSalary(salaryDto, employeeId), HttpStatus.OK);
     }

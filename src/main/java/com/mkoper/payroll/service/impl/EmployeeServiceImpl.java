@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mkoper.payroll.dto.DepartmentDto;
 import com.mkoper.payroll.dto.EmployeeDto;
-import com.mkoper.payroll.dto.PositionDto;
 import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
 import com.mkoper.payroll.model.Employee;
 import com.mkoper.payroll.repository.EmployeeRepository;
@@ -70,13 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDto.setLastName(employee.getLastName());
         employeeDto.setEmail(employee.getEmail());
         employeeDto.setPhoneNumber(employee.getPhoneNumber());
-
-        try {
-            PositionDto positionDto = new PositionDto();
-            positionDto.setPositionName(employee.getJobPosition().getName());
-            positionDto.setDepartment(new DepartmentDto(employee.getJobPosition().getDepartment().getName()));
-            employeeDto.setJobPosition(positionDto);
-        } catch (Exception e) {}
+        employeeDto.setJobPosition(employee.getJobPosition().getName());
 
         return employeeDto;
     }

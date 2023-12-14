@@ -2,22 +2,21 @@ package com.mkoper.payroll.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.mkoper.payroll.dto.EnrollmentDto;
 
-import com.mkoper.payroll.model.Enrollment;
-import com.mkoper.payroll.repository.EnrollmentRepository;
+public interface EnrollmentService {
+    // get all enrollments
+    public List<EnrollmentDto> getEntrollments();
 
-@Service
-public class EnrollmentService {
-    @Autowired
-    private final EnrollmentRepository enrollmentRepository;
+    // get enrollemnt with given employee ID
+    public EnrollmentDto getByEmployeeId(Long employeeId);
 
-    public EnrollmentService(EnrollmentRepository enrollmentRepository) {
-        this.enrollmentRepository = enrollmentRepository;
-    } 
+    // update enrollment with given employee ID
+    public EnrollmentDto updateEnrollment(EnrollmentDto enrollment, Long employeeId);
 
-    public List<Enrollment> getEntrollments() {
-        return enrollmentRepository.findAll();
-    }
+    // save new enrollment to the db
+    public EnrollmentDto saveEnrollment(EnrollmentDto enrollment);
+
+    // delete enrollment from the db
+    public void deleteEnrollment(Long enrollmentId);
 }
