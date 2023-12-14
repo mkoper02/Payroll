@@ -2,6 +2,8 @@ package com.mkoper.payroll.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,11 +32,13 @@ public class WorkingHoursLog {
     
     // FOREIGN KEYS
     // relation with employee table
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
     // relation with payroll_raport
+    @JsonIgnore
     @OneToOne(mappedBy = "workingLog")
     private PayrollRaport payrollRaport;
 

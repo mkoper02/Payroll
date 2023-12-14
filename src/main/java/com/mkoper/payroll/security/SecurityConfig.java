@@ -37,9 +37,10 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests((authorize) -> 
                 authorize.requestMatchers( "/auth/login").permitAll()
-                    .requestMatchers("/auth/register").hasRole("ADMIN")
-                    .requestMatchers("/employee").hasRole("ADMIN")
-                    .requestMatchers("/employee/**").hasAnyRole("ADMIN", "MODERATOR", "USER")
+                        .requestMatchers("**").permitAll()
+                    // .requestMatchers("/auth/register").hasRole("ADMIN")
+                    // .requestMatchers("/employee").hasRole("ADMIN")
+                    // .requestMatchers("/employee/**").hasAnyRole("ADMIN", "MODERATOR", "USER")
                     .anyRequest()
                     .authenticated())
             .httpBasic(Customizer.withDefaults());
