@@ -1,5 +1,6 @@
 package com.mkoper.payroll.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +39,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto updateEmployee(EmployeeDto employeeDto, Long id) {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
 
-        employee.setDateOfBirth(employeeDto.getDateOfBirth());
-        employee.setFirstName(employeeDto.getFirstName());
-        employee.setLastName(employeeDto.getLastName());
-        employee.setEmail(employeeDto.getEmail());
-        employee.setPhoneNumber(employeeDto.getPhoneNumber());
+        if(employeeDto.getDateOfBirth() != null) employee.setDateOfBirth(employeeDto.getDateOfBirth());
+        if(employeeDto.getFirstName() != null) employee.setFirstName(employeeDto.getFirstName());
+        if(employeeDto.getLastName() != null) employee.setLastName(employeeDto.getLastName());
+        if(employeeDto.getEmail() != null) employee.setEmail(employeeDto.getEmail());
+        if(employeeDto.getPhoneNumber() != null) employee.setPhoneNumber(employeeDto.getPhoneNumber());
 
         Employee updatedEmployee = employeeRepository.save(employee);
         return mapToEmployeeDto(updatedEmployee);
@@ -50,6 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee saveEmployee(Employee employee) {
+        if (employee.getJoinDate() == null) employee.setJoinDate(LocalDate.now());
         return employeeRepository.save(employee);
     }
 

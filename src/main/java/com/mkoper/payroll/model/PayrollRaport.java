@@ -29,8 +29,8 @@ public class PayrollRaport {
     @Column(nullable = true)
     private Float bonus;
 
-    @Column(name = "total_amount", nullable = false)
-    private Float totalAmount;
+    @Column(name = "net_salary", nullable = false)
+    private Float netSalary;
 
     // FOREIGN KEYS
     // relation with employee table
@@ -56,28 +56,35 @@ public class PayrollRaport {
         inverseJoinColumns = @JoinColumn(name = "benefit_id")
     )
     private List<Benefit> payrollraportBenefits;
+
+    // relation with tax table
+    @ManyToMany
+    @JoinTable(
+        name = "payrollraport_tax",
+        joinColumns = @JoinColumn(name = "payrollraport_id"),
+        inverseJoinColumns = @JoinColumn(name = "tax_id")
+    )
+    private List<Tax> payrollraportTaxes;
     
     public PayrollRaport() {}
 
-    public PayrollRaport(Long id, LocalDate date, Float bonus, Float totalAmount, Employee employee, WorkingHoursLog workingLog, Salary salary, List<Benefit> payrollraportBenefits) {
+    public PayrollRaport(Long id, LocalDate date, Float bonus, Float netSalary, Employee employee, WorkingHoursLog workingLog, Salary salary) {
         this.id = id;
         this.date = date;
         this.bonus = bonus;
-        this.totalAmount = totalAmount;
+        this.netSalary = netSalary;
         this.employee = employee;
         this.workingLog = workingLog;
         this.salary = salary;
-        this.payrollraportBenefits = payrollraportBenefits;
     }
 
-    public PayrollRaport(LocalDate date, Float bonus, Float totalAmount, Employee employee, WorkingHoursLog workingLog, Salary salary, List<Benefit> payrollraportBenefits) {
+    public PayrollRaport(LocalDate date, Float bonus, Float netSalary, Employee employee, WorkingHoursLog workingLog, Salary salary) {
         this.date = date;
         this.bonus = bonus;
-        this.totalAmount = totalAmount;
+        this.netSalary = netSalary;
         this.employee = employee;
         this.workingLog = workingLog;
         this.salary = salary;
-        this.payrollraportBenefits = payrollraportBenefits;
     }
 
     public Long getId() {
@@ -104,12 +111,12 @@ public class PayrollRaport {
         this.bonus = bonus;
     }
 
-    public Float getTotalAmount() {
-        return totalAmount;
+    public Float getNetSalary() {
+        return netSalary;
     }
 
-    public void setTotalAmount(Float totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setNetSalary(Float netSalary) {
+        this.netSalary = netSalary;
     }
 
     public Employee getEmployee() {
@@ -143,9 +150,12 @@ public class PayrollRaport {
     public void setPayrollraportBenefits(List<Benefit> payrollraportBenefits) {
         this.payrollraportBenefits = payrollraportBenefits;
     }
-  
-    @Override
-    public String toString() {
-        return "PayrollRaport [id=" + id + ", date=" + date + ", bonus=" + bonus + ", totalAmount=" + totalAmount + ", employee=" + employee + ", workingLog=" + workingLog + ", salary=" + salary + ", payrollraportBenefits=" + payrollraportBenefits + "]";
+
+    public List<Tax> getPayrollraportTaxes() {
+        return payrollraportTaxes;
+    }
+
+    public void setPayrollraportTaxes(List<Tax> payrollraportTaxes) {
+        this.payrollraportTaxes = payrollraportTaxes;
     }
 }

@@ -3,12 +3,12 @@ package com.mkoper.payroll.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +21,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "phone_number"))
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "phone_number"), @UniqueConstraint(columnNames = "email")})
 public class Employee {
 
     @Id
@@ -52,22 +52,14 @@ public class Employee {
     @Column(length = 50, nullable = false) 
     private String street;
 
+    @Column(name = "join_date", nullable = false) 
+    @CreationTimestamp
+    private LocalDate joinDate;
+
     // FOREIGN KEYS
-    // relation with users table
-    @JsonIgnore
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "user_id")
-    private UserEntity user;
-
-    // relation with enrollment table
-    @JsonIgnore
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "enrollment_id")
-    private Enrollment enrollment;
-
     // relation with salary table
     @JsonIgnore
-    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "employee")
     @PrimaryKeyJoinColumn(name = "salary_id")
     private Salary salary;
 
@@ -79,17 +71,17 @@ public class Employee {
 
     // relation with working_hours_log table
     @JsonIgnore
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "employee")
     private List<WorkingHoursLog> workLogs;
 
     // relation with payroll_raport table
     @JsonIgnore
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "employee")
     private List<PayrollRaport> payrollRaports;
 
     public Employee() {}
 
-    public Employee(Long id, String firstName, String lastName, LocalDate dateOfBirth, String email, String phoneNumber, String country, String city, String street) {
+    public Employee(Long id, String firstName, String lastName, LocalDate dateOfBirth, String email, String phoneNumber, String country, String city, String street, LocalDate joinDate) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -99,9 +91,10 @@ public class Employee {
         this.country = country;
         this.city = city;
         this.street = street;
+        this.joinDate = joinDate;
     }
 
-    public Employee(String firstName, String lastName, LocalDate dateOfBirth, String email, String phoneNumber, String country, String city, String street) {
+    public Employee(String firstName, String lastName, LocalDate dateOfBirth, String email, String phoneNumber, String country, String city, String street, LocalDate joinDate) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
@@ -110,6 +103,7 @@ public class Employee {
         this.country = country;
         this.city = city;
         this.street = street;
+        this.joinDate = joinDate;
     }
 
     public Long getId() {
@@ -118,22 +112,6 @@ public class Employee {
 
     public void setId(Long id) {
         id = this.id;
-    }
-
-    public UserEntity getUserEntity() {
-        return user;
-    }
-
-    public void setUserEntity(UserEntity user) {
-        this.user = user;
-    }
-
-    public Enrollment getEnrollment() {
-        return enrollment;
-    }
-
-    public void setEnrollment(Enrollment enrollment) {
-        this.enrollment = enrollment;
     }
 
     public String getFirstName() {
@@ -232,8 +210,11 @@ public class Employee {
         this.payrollRaports = payrollRaports;
     }
 
-    @Override
-    public String toString() {
-        return "Employee [id=" + id + ", dateOfBirth=" + dateOfBirth + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phoneNumber=" + phoneNumber + ", country=" + country + ", city=" + city + ", street=" + street + ", user=" + user + ", enrollment=" + enrollment + "]";
+    public LocalDate getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(LocalDate joinDate) {
+        this.joinDate = joinDate;
     }
 }   

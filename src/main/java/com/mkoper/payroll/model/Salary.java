@@ -6,13 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -21,16 +17,19 @@ import jakarta.persistence.Table;
 @Entity
 @Table
 public class Salary {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column(name = "gross_salary", nullable = false)
     private Float grossSalary;
-    
-    @Column(name = "net_salary", nullable = false)
-    private Float netSalary;
+
+    @Column(name = "contract_type", nullable = false) 
+    private String contractType;
+
+    @Column(name = "hours_per_month", nullable = false) 
+    private Integer hours;
 
     // FOREIGN KEYS
     // relation with employee table (share primary key)
@@ -39,42 +38,27 @@ public class Salary {
     @MapsId
     private Employee employee;
 
-    // relation with enrollment table
-    @OneToOne
-    @JoinColumn(name = "enrollment_id")
-    private Enrollment enrollment;
-
-    // relation with tax table
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "tax_salary",
-        joinColumns = @JoinColumn(name = "salary_id"),
-        inverseJoinColumns = @JoinColumn(name = "tax_id")
-    )
-    private List<Tax> salaryTaxes;
-
     // relation with payroll_raport
+    @JsonIgnore
     @OneToMany(mappedBy = "salary")
     private List<PayrollRaport> payrollRaports;
 
     public Salary() {}
 
-    public Salary(Long id, Float grossSalary, Float netSalary, Employee employee, Enrollment enrollment, List<Tax> salaryTaxes, List<PayrollRaport> payrollRaports) {
+    public Salary(Long id, Float grossSalary, String contractType, Integer hours, Employee employee, List<PayrollRaport> payrollRaports) {
         this.id = id;
         this.grossSalary = grossSalary;
-        this.netSalary = netSalary;
+        this.contractType = contractType;
+        this.hours = hours;
         this.employee = employee;
-        this.enrollment = enrollment;
-        this.salaryTaxes = salaryTaxes;
         this.payrollRaports = payrollRaports;
     }
 
-    public Salary(Float grossSalary, Float netSalary, Employee employee, Enrollment enrollment, List<Tax> salaryTaxes, List<PayrollRaport> payrollRaports) {
+    public Salary(Float grossSalary, String contractType, Integer hours, Employee employee, List<PayrollRaport> payrollRaports) {
         this.grossSalary = grossSalary;
-        this.netSalary = netSalary;
+        this.contractType = contractType;
+        this.hours = hours;
         this.employee = employee;
-        this.enrollment = enrollment;
-        this.salaryTaxes = salaryTaxes;
         this.payrollRaports = payrollRaports;
     }
 
@@ -94,12 +78,20 @@ public class Salary {
         this.grossSalary = grossSalary;
     }
 
-    public Float getNetSalary() {
-        return netSalary;
+    public String getContractType() {
+        return contractType;
     }
 
-    public void setNetSalary(Float netSalary) {
-        this.netSalary = netSalary;
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
+
+    public Integer getHours() {
+        return hours;
+    }
+
+    public void setHours(Integer hours) {
+        this.hours = hours;
     }
 
     public Employee getEmployee() {
@@ -110,32 +102,11 @@ public class Salary {
         this.employee = employee;
     }
 
-    public Enrollment getEnrollment() {
-        return enrollment;
-    }
-
-    public void setEnrollment(Enrollment enrollment) {
-        this.enrollment = enrollment;
-    }
-
-    public List<Tax> getSalaryTaxes() {
-        return salaryTaxes;
-    }
-
-    public void setSalaryTaxes(List<Tax> salaryTaxes) {
-        this.salaryTaxes = salaryTaxes;
-    }
-
     public List<PayrollRaport> getPayrollRaports() {
         return payrollRaports;
     }
 
     public void setPayrollRaports(List<PayrollRaport> payrollRaports) {
         this.payrollRaports = payrollRaports;
-    }
-
-    @Override
-    public String toString() {
-        return "Salary [id=" + id + ", grossSalary=" + grossSalary + ", netSalary=" + netSalary + ", employee=" + employee + ", enrollment=" + enrollment + ", salaryTaxes=" + salaryTaxes + ", payrollRaports=" + payrollRaports + "]";
     }
 }

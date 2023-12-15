@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.mkoper.payroll.dto.SalaryDto;
+import com.mkoper.payroll.model.Salary;
 import com.mkoper.payroll.service.SalaryService;
 
-@RequestMapping
+@RestController
 public class SalaryController {
     
     @Autowired
@@ -39,7 +40,7 @@ public class SalaryController {
 
     // create salary for employee with given ID
     @PostMapping("salary/create")
-    public ResponseEntity<SalaryDto> addSalary(@RequestBody SalaryDto salaryDto) {
+    public ResponseEntity<Salary> addSalary(@RequestBody Salary salaryDto) {
         return new ResponseEntity<>(salaryService.saveSalary(salaryDto), HttpStatus.CREATED);
     }
 

@@ -6,15 +6,15 @@ public class PayrollRaportDto {
     private Long id;
     private LocalDate date;
     private Float bonus;
-    private Float totalAmount;
+    private Float netSalary;
 
     public PayrollRaportDto() {}
 
-    public PayrollRaportDto(Long id, LocalDate date, Float bonus, Float totalAmount) {
+    public PayrollRaportDto(Long id, LocalDate date, Float bonus, Float netSalary) {
         this.id = id;
         this.date = date;
         this.bonus = bonus;
-        this.totalAmount = totalAmount;
+        this.netSalary = netSalary;
     }
 
     public Long getId() {
@@ -41,11 +41,11 @@ public class PayrollRaportDto {
         this.bonus = bonus;
     }
 
-    public Float getTotalAmount() {
-        return totalAmount;
+    public Float getNetSalary() {
+        return netSalary;
     }
 
-    public void setTotalAmount(Float totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setNetSalary(Float netSalary) {
+        this.netSalary = netSalary;
     }    
 }

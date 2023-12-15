@@ -40,7 +40,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         payrollRaportDto.setId(payrollRaport.getId());
         payrollRaportDto.setDate(payrollRaport.getDate());
         payrollRaportDto.setBonus(payrollRaport.getBonus());
-        payrollRaportDto.setTotalAmount(payrollRaport.getTotalAmount());
+        payrollRaportDto.setNetSalary(payrollRaport.getNetSalary());
 
         return payrollRaportDto;
     }

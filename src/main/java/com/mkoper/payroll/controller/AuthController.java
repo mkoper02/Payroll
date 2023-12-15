@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mkoper.payroll.dto.AuthResponseDto;
 import com.mkoper.payroll.dto.LoginDto;
 import com.mkoper.payroll.dto.RegisterDto;
+import com.mkoper.payroll.model.Employee;
 import com.mkoper.payroll.model.Role;
 import com.mkoper.payroll.model.UserEntity;
 import com.mkoper.payroll.repository.EmployeeRepository;
@@ -67,11 +68,27 @@ public class AuthController {
             return new ResponseEntity<>("Username is taken!", HttpStatus.BAD_REQUEST);
         }
 
+        if (userRepository.existsById(registerDto.getId())) {
+            return new ResponseEntity<>("User with given ID already exists!", HttpStatus.BAD_REQUEST);
+        }
+
         UserEntity user = new UserEntity();
-        user.setEmployee(employeeRepository.findById(registerDto.getId()).get());
-        user.setUsername(registerDto.getUsername());
-        // user.setPassword(registerDto.getPassword());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        Employee employee = employeeRepository.findById(registerDto.getId()).get();
+
+        user.setEmployee(employee);
+
+        if (registerDto.getUsername() == null) {
+            String usernamePassword = removePolishSigns(employee.getFirstName().substring(0, 3) + employee.getLastName().substring(0, 3) + employee.getId().toString().toLowerCase());
+
+            user.setUsername(usernamePassword);
+            user.setPassword(passwordEncoder.encode(usernamePassword));
+        }
+
+        else {
+            user.setUsername(registerDto.getUsername());
+            // user.setPassword(registerDto.getPassword());
+            user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        }
 
         if (registerDto.getRole() == null) {
             user.setRole(Collections.singletonList(roleRepository.findByName("USER").get()));
@@ -108,5 +125,32 @@ public class AuthController {
         userRepository.save(user);
 
         return new ResponseEntity<>("User registration was successful", HttpStatus.OK);
+    }
+
+    private static String removePolishSigns(String word){
+
+        String[] polish = {"Ą", "ą", "Ć", "ć", "Ę", "ę", "Ł", "ł","Ń", "ń", "Ó", "ó", "Ś", "ś", "Ź", "ź", "Ż", "ż"};
+        String[] standard = {"A", "a", "C", "c", "E", "e", "L", "l","N", "n", "O", "o", "S", "s", "Z", "z", "Z", "z"};
+
+        StringBuilder result = new StringBuilder();
+        for (char ch : word.toCharArray()) {
+            int index = -1;
+            for (int i = 0; i< polish.length; i++) {
+                if (polish[i].charAt(0) == ch) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index >= 0) {
+                result.append(standard[index]);
+            }
+            
+            else {
+                result.append(ch);
+            }
+        }
+
+        return result.toString();
     }
 }

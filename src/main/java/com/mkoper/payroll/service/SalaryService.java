@@ -3,6 +3,7 @@ package com.mkoper.payroll.service;
 import java.util.List;
 
 import com.mkoper.payroll.dto.SalaryDto;
+import com.mkoper.payroll.model.Salary;
 
 public interface SalaryService {
     // get all salaries
@@ -15,7 +16,7 @@ public interface SalaryService {
     public SalaryDto updateSalary(SalaryDto salaryDto, Long employeeId);
 
     // save new salary to the db
-    public SalaryDto saveSalary(SalaryDto salaryDto);
+    public Salary saveSalary(Salary salary);
 
     // delete from the db
     public void deleteSalary(Long employeeId);

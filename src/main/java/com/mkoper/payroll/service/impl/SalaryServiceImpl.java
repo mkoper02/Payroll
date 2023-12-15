@@ -10,7 +10,6 @@ import com.mkoper.payroll.dto.SalaryDto;
 import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
 import com.mkoper.payroll.model.Salary;
 import com.mkoper.payroll.repository.EmployeeRepository;
-import com.mkoper.payroll.repository.EnrollmentRepository;
 import com.mkoper.payroll.repository.SalaryRepository;
 import com.mkoper.payroll.service.SalaryService;
 
@@ -19,12 +18,10 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Autowired private SalaryRepository salaryRepository;
     @Autowired private EmployeeRepository employeeRepository;
-    @Autowired private EnrollmentRepository enrollmentRepository;
 
-    public SalaryServiceImpl(SalaryRepository salaryRepository, EmployeeRepository employeeRepository, EnrollmentRepository enrollmentRepository) {
+    public SalaryServiceImpl(SalaryRepository salaryRepository, EmployeeRepository employeeRepository) {
         this.salaryRepository = salaryRepository;
         this.employeeRepository = employeeRepository;
-        this.enrollmentRepository = enrollmentRepository;
     }
 
     @Override
@@ -35,51 +32,51 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public SalaryDto getByEmployeeId(Long employeeId) {
-        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Salary for employee with given ID could not be found!"));
+        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
         return mapToSalaryDto(salary);
     }
 
     @Override
-    public SalaryDto saveSalary(SalaryDto salaryDto) {
-        Salary salary = new Salary();
+    public SalaryDto updateSalary(SalaryDto salaryDto, Long employeeId) {
+        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
 
-        salary.setId(salaryDto.getId());
-        salary.setEmployee(employeeRepository.findById(salaryDto.getId()).get());
-        salary.setGrossSalary(salaryDto.getGrossSalary());
-        salary.setNetSalary(calculateNetSalary());
-
-        // When creating employee we always create enrollment first and set Salary for null
-        salary.setEnrollment(enrollmentRepository.findById(salaryDto.getId()).get());
+        if (salaryDto.getGrossSalary() != null) salary.setGrossSalary(salaryDto.getGrossSalary());
+        if (salaryDto.getHours() != null) salary.setHours(salaryDto.getHours());
+        if (salaryDto.getContractType() != null && validContractType(salaryDto.getContractType())) salary.setContractType(salaryDto.getContractType());
 
         return mapToSalaryDto(salaryRepository.save(salary));
     }
 
     @Override
-    public SalaryDto updateSalary(SalaryDto salaryDto, Long employeeId) {
-        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Salary for employee with given ID could not be found!"));
-
-        salary.setGrossSalary(salaryDto.getGrossSalary());
-
-        return mapToSalaryDto(salaryRepository.save(salary));
+    public Salary saveSalary(Salary salary) {
+        if (validContractType(salary.getContractType())) {
+            salary.setEmployee(employeeRepository.findById(salary.getId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
+            return salaryRepository.save(salary);
+        }
+        throw new IllegalArgumentException("Invalid contract type");
     }
 
+    @Override
     public void deleteSalary(Long employeeId) {
-        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Salary for employee with given ID could not be found"));
+        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
         salaryRepository.delete(salary);
     }
- 
+
     private SalaryDto mapToSalaryDto(Salary salary) {
         SalaryDto salaryDto = new SalaryDto();
 
         salaryDto.setId(salary.getId());
+        salaryDto.setContractType(salary.getContractType());
         salaryDto.setGrossSalary(salary.getGrossSalary());
-        salaryDto.setNetSalary(salary.getNetSalary());
+        salaryDto.setHours(salary.getHours());
 
         return salaryDto;
     }
 
-    private Float calculateNetSalary() {
-        // TODO: get tax and calculate cost
-        return null;
+    private Boolean validContractType(String contractType) {
+        if (contractType.equals("Umowa o prace") || contractType.equals("Umowa-zlecenie")) 
+            return true;
+        return false;
     }
+    
 }
