@@ -40,13 +40,13 @@ public class SalaryController {
 
     // create salary for employee with given ID
     @PostMapping("salary/create")
-    public ResponseEntity<Salary> addSalary(@RequestBody Salary salaryDto) {
-        return new ResponseEntity<>(salaryService.saveSalary(salaryDto), HttpStatus.CREATED);
+    public ResponseEntity<Salary> addSalary(@RequestBody Salary salary) {
+        return new ResponseEntity<>(salaryService.saveSalary(salary), HttpStatus.CREATED);
     }
 
     // upadte gross salary of employee with given ID
-    @PutMapping("salary/update/{employeeId}")
-    public ResponseEntity<SalaryDto> updateSalary(@RequestBody SalaryDto salaryDto, @PathVariable Long employeeId) {
-        return new ResponseEntity<>(salaryService.updateSalary(salaryDto, employeeId), HttpStatus.OK);
+    @PutMapping("salary/update")
+    public ResponseEntity<SalaryDto> updateSalary(@RequestBody SalaryDto salaryDto) {
+        return new ResponseEntity<>(salaryService.updateSalary(salaryDto), HttpStatus.OK);
     }
 }

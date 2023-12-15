@@ -1,30 +1,39 @@
 package com.mkoper.payroll.dto;
 
 public class PositionDto {
-    private String positionName;
-    private DepartmentDto department;
+    private Long id;
+    private String name;
+    private String departmentName;
     
     public PositionDto() {}
     
-    public PositionDto(String positionName, DepartmentDto department) {
-        this.positionName = positionName;
-        this.department = department;
+    public PositionDto(Long id, String name, String departmentName) {
+        this.id = id;
+        this.name = name;
+        this.departmentName = departmentName;
+    }
+        
+    public Long getId() {
+        return id;
     }
 
-    public String getPositionName() {
-        return positionName;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setPositionName(String positionName) {
-        this.positionName = positionName;
+    public String getName() {
+        return name;
     }
 
-    public DepartmentDto getDepartment() {
-        return department;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setDepartment(DepartmentDto department) {
-        this.department = department;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
 }

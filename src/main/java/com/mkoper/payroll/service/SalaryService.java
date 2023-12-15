@@ -13,7 +13,7 @@ public interface SalaryService {
     public SalaryDto getByEmployeeId(Long employeeId);
 
     // update salary with given employee ID
-    public SalaryDto updateSalary(SalaryDto salaryDto, Long employeeId);
+    public SalaryDto updateSalary(SalaryDto salaryDto);
 
     // save new salary to the db
     public Salary saveSalary(Salary salary);

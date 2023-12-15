@@ -9,18 +9,21 @@ import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.EmployeeDto;
 import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
+import com.mkoper.payroll.exceptions.PositionNotFoundException;
 import com.mkoper.payroll.model.Employee;
 import com.mkoper.payroll.repository.EmployeeRepository;
+import com.mkoper.payroll.repository.PositionRepository;
 import com.mkoper.payroll.service.EmployeeService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     
-    @Autowired 
-    private EmployeeRepository employeeRepository;
+    @Autowired private EmployeeRepository employeeRepository;
+    @Autowired private PositionRepository positionRepository;
     
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, PositionRepository positionRepository) {
         this.employeeRepository = employeeRepository;
+        this.positionRepository = positionRepository;
     }
 
     @Override
@@ -36,8 +39,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto updateEmployee(EmployeeDto employeeDto, Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+    public List<EmployeeDto> getEmployeesByPositionId(Long positionId) {
+        
+        List<Employee> employees = employeeRepository.findByJobPosition(positionRepository.findById(positionId).orElseThrow(() -> new PositionNotFoundException("Position could not be found!")));
+        return employees.stream().map((employee) -> mapToEmployeeDto(employee)).collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(EmployeeDto employeeDto) {
+        if (employeeDto.getId() == null) {
+            throw new IllegalArgumentException("ID was not given!");
+        }
+
+        Employee employee = employeeRepository.findById(employeeDto.getId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
 
         if(employeeDto.getDateOfBirth() != null) employee.setDateOfBirth(employeeDto.getDateOfBirth());
         if(employeeDto.getFirstName() != null) employee.setFirstName(employeeDto.getFirstName());
@@ -57,8 +71,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployeeId(Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
-        employeeRepository.delete(employee);
+        employeeRepository.delete(employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
     }
 
     private EmployeeDto mapToEmployeeDto(Employee employee){

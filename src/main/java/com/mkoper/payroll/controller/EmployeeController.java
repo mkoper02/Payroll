@@ -39,6 +39,11 @@ public class EmployeeController {
 		return ResponseEntity.ok(employeeService.getEmployeeById(employeeId));
 	}
 
+	@GetMapping("employee/position/{positionId}")
+	public List<EmployeeDto> getEmployeesByPositionId(@PathVariable Long positionId) {
+		return employeeService.getEmployeesByPositionId(positionId);
+	}
+
 	// add employee to the db
 	@PostMapping("employee/create")
 	public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
@@ -46,9 +51,9 @@ public class EmployeeController {
 	}
 
 	// update employee data in the db
-	@PutMapping("employee/update/{employeeId}")
-	public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable("employeeId") Long employeeId) {
-		return new ResponseEntity<>(employeeService.updateEmployee(employeeDto, employeeId), HttpStatus.OK);
+	@PutMapping("employee/update")
+	public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto) {
+		return new ResponseEntity<>(employeeService.updateEmployee(employeeDto), HttpStatus.OK);
 	}
 
 	// delete employee data from the db

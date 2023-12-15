@@ -37,8 +37,12 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
     @Override
-    public SalaryDto updateSalary(SalaryDto salaryDto, Long employeeId) {
-        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+    public SalaryDto updateSalary(SalaryDto salaryDto) {
+        if (salaryDto.getId() == null) {
+            throw new IllegalArgumentException("ID was not given!");
+        }
+
+        Salary salary = salaryRepository.findById(salaryDto.getId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
 
         if (salaryDto.getGrossSalary() != null) salary.setGrossSalary(salaryDto.getGrossSalary());
         if (salaryDto.getHours() != null) salary.setHours(salaryDto.getHours());
@@ -58,8 +62,7 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public void deleteSalary(Long employeeId) {
-        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
-        salaryRepository.delete(salary);
+        salaryRepository.delete(salaryRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
     }
 
     private SalaryDto mapToSalaryDto(Salary salary) {

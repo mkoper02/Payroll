@@ -12,7 +12,7 @@ public interface TaxService {
     public Tax saveTax(Tax tax);
 
     // Update tax with given ID
-    public Tax updateTax(Tax tax, Long taxId);
+    public Tax updateTax(Tax tax);
 
     // delete Tax with given ID
     public void deleteTax(Long taxId);

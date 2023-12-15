@@ -3,11 +3,14 @@ package com.mkoper.payroll.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.mkoper.payroll.exceptions.TaxNotFoundException;
 import com.mkoper.payroll.model.Tax;
 import com.mkoper.payroll.repository.TaxRepository;
 import com.mkoper.payroll.service.TaxService;
 
+@Service
 public class TaxServiceImpl implements TaxService {
 
     @Autowired
@@ -23,9 +26,17 @@ public class TaxServiceImpl implements TaxService {
     }
 
     @Override
-    public Tax updateTax(Tax tax, Long taxId) {
-        tax.setId(taxId);
-        return taxRepository.save(tax);
+    public Tax updateTax(Tax tax) {
+        if (tax.getId() == null) {
+            throw new IllegalArgumentException("ID was not given!");
+        }
+
+        Tax taxDb = taxRepository.findById(tax.getId()).orElseThrow(() -> new TaxNotFoundException("Tax with given ID could not be found!"));
+        
+        if(tax.getName() != null) taxDb.setName(tax.getName());
+        if(tax.getCost() != null) taxDb.setCost(tax.getCost());
+
+        return taxRepository.save(taxDb);
     }
 
     @Override

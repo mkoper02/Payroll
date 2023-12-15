@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.mkoper.payroll.model.Tax;
 import com.mkoper.payroll.service.TaxService;
 
-@RequestMapping
+@RestController
 public class TaxController {
     
     @Autowired
@@ -31,9 +31,9 @@ public class TaxController {
         return taxService.getAll();
     }
 
-    @PutMapping("tax/update/{taxId}")
-    public ResponseEntity<Tax> updateTax(@RequestBody Tax tax, @PathVariable Long taxId) {
-        return new ResponseEntity<>(taxService.updateTax(tax, taxId), HttpStatus.OK);
+    @PutMapping("tax/update")
+    public ResponseEntity<Tax> updateTax(@RequestBody Tax tax) {
+        return new ResponseEntity<>(taxService.updateTax(tax), HttpStatus.OK);
     }
 
     @PostMapping("tax/create")
