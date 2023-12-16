@@ -44,7 +44,7 @@ public class SalaryController {
         return new ResponseEntity<>(salaryService.saveSalary(salary), HttpStatus.CREATED);
     }
 
-    // upadte gross salary of employee with given ID
+    // upadte salary of employee with given ID
     @PutMapping("salary/update")
     public ResponseEntity<SalaryDto> updateSalary(@RequestBody SalaryDto salaryDto) {
         return new ResponseEntity<>(salaryService.updateSalary(salaryDto), HttpStatus.OK);

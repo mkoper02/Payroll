@@ -43,6 +43,16 @@ public class PositionServiceImpl implements PositionService {
     }
 
     @Override
+    public PositionDto getByPositionId(Long positionId) {
+        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+    }
+
+    @Override
+    public PositionDto getByPositionName(String positionName) {
+        return mapToPosiotionDto(positionRepository.findByName(positionName).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+    }
+
+    @Override
     public PositionDto getByEmployeeId(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
         Position position = positionRepository.findById(employee.getJobPosition().getId()).get();
@@ -58,7 +68,8 @@ public class PositionServiceImpl implements PositionService {
 
         Position position = positionRepository.findById(posiotionDto.getId()).orElseThrow(() -> new PositionNotFoundException("Position could not be found!"));
 
-        if (posiotionDto.getDepartmentName() != null) position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+        // TODO:
+        // if (posiotionDto.getDepartmentName() != null) position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
         if (posiotionDto.getName() != null) position.setName(posiotionDto.getName());
 
         return mapToPosiotionDto(positionRepository.save(position));

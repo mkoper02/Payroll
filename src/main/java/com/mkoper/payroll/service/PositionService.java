@@ -12,6 +12,12 @@ public interface PositionService {
     // get positions in given department
     public List<PositionDto> getByDepartmentId(Long departmentId);
 
+    // get position with given ID
+    public PositionDto getByPositionId(Long positionId);
+
+    // get position with given name
+    public PositionDto getByPositionName(String positionName);
+
     // get position of employee wih given ID
     public PositionDto getByEmployeeId(Long employeeId);
 

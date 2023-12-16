@@ -1,6 +1,7 @@
 package com.mkoper.payroll.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,6 @@ import com.mkoper.payroll.model.Position;
 public interface PositionRepository extends JpaRepository<Position, Long> {
     
     List<Position> findByDepartment(Department department);
+
+    Optional<Position> findByName(String name);
 }
