@@ -1,18 +1,20 @@
 package com.mkoper.payroll.dto;
 
-import java.time.LocalDate;
-
 public class WorkingHoursLogDto {
     private Long id;
+    private Long employeeId;
     private Integer hoursWorked;
-    private LocalDate date;
+    private Integer year;
+    private Integer month;
     
     public WorkingHoursLogDto() {}
-
-    public WorkingHoursLogDto(Long id, Integer hoursWorked, LocalDate date) {
+    
+    public WorkingHoursLogDto(Long id, Long employeeId, Integer hoursWorked, Integer year, Integer month) {
         this.id = id;
+        this.employeeId = employeeId;
         this.hoursWorked = hoursWorked;
-        this.date = date;
+        this.year = year;
+        this.month = month;
     }
 
     public Long getId() {
@@ -23,6 +25,14 @@ public class WorkingHoursLogDto {
         this.id = id;
     }
 
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
     public Integer getHoursWorked() {
         return hoursWorked;
     }
@@ -31,11 +41,19 @@ public class WorkingHoursLogDto {
         this.hoursWorked = hoursWorked;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public Integer getYear() {
+        return year;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
     }
 }

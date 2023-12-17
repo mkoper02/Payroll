@@ -23,7 +23,7 @@ public class WorkingHoursLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "hours_worked", nullable = false)
+    @Column(name = "hours_worked", nullable = true)
     private Integer hoursWorked;
     
     @Column(name = "date", nullable = false)

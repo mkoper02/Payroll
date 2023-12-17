@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
 
-        // TODO: check if deleting this line improve login behaviour
         userDto.setRole(user.getRole().stream().map(Role::getName).collect(Collectors.toList()));
         
         return userDto; 

@@ -14,4 +14,6 @@ public interface WorkingHoursLogRepository extends JpaRepository<WorkingHoursLog
     List<WorkingHoursLog> findByEmployeeId(Long employeeId);
 
     List<WorkingHoursLog> findByDateBetweenAndEmployeeId(LocalDate start, LocalDate end, Long employeeId);
+
+    List<WorkingHoursLog> findByDateBetween(LocalDate start, LocalDate end);
 }

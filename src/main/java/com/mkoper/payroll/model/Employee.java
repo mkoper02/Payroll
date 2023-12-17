@@ -64,7 +64,6 @@ public class Employee {
     private Salary salary;
 
     // relation with position table
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "position_id")
     private Position jobPosition;

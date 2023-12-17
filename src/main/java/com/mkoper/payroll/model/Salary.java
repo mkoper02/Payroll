@@ -28,7 +28,7 @@ public class Salary {
     @Column(name = "contract_type", nullable = false) 
     private String contractType;
 
-    @Column(name = "hours_per_month", nullable = false) 
+    @Column(name = "hours_per_week", nullable = true) 
     private Integer hours;
 
     // FOREIGN KEYS

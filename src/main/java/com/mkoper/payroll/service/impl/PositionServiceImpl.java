@@ -44,7 +44,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public PositionDto getByPositionId(Long positionId) {
-        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!")));
     }
 
     @Override
@@ -63,13 +63,13 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public PositionDto updatePosition(PositionDto posiotionDto) {
         if (posiotionDto.getId() == null) {
-            throw new IllegalArgumentException("ID was not given!");
+            throw new IllegalArgumentException("Position ID was not given!");
         }
 
         Position position = positionRepository.findById(posiotionDto.getId()).orElseThrow(() -> new PositionNotFoundException("Position could not be found!"));
 
-        // TODO:
-        // if (posiotionDto.getDepartmentName() != null) position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+        if (posiotionDto.getDepartmentName() != null) 
+            position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
         if (posiotionDto.getName() != null) position.setName(posiotionDto.getName());
 
         return mapToPosiotionDto(positionRepository.save(position));
@@ -77,6 +77,10 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public Position savePosition(Position position) {
+        if (position.getDepartment() == null) 
+            throw new IllegalArgumentException("Department  was not given!");
+
+        position.setDepartment(departmentRepository.findByName(position.getDepartment().getName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
         return positionRepository.save(position);
     }
 

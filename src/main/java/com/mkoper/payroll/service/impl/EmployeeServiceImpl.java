@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.EmployeeDto;
+import com.mkoper.payroll.dto.PositionDto;
+import com.mkoper.payroll.exceptions.DepartmentNotFoundException;
 import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
 import com.mkoper.payroll.exceptions.PositionNotFoundException;
 import com.mkoper.payroll.model.Employee;
+import com.mkoper.payroll.model.Position;
 import com.mkoper.payroll.repository.EmployeeRepository;
 import com.mkoper.payroll.repository.PositionRepository;
 import com.mkoper.payroll.service.EmployeeService;
@@ -29,6 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDto> getAll() {
         List<Employee> employees = employeeRepository.findAll();
+        System.out.println(employees);
+
         return employees.stream().map((employee) -> mapToEmployeeDto(employee)).collect(Collectors.toList());
     }
 
@@ -57,6 +62,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(employeeDto.getLastName() != null) employee.setLastName(employeeDto.getLastName());
         if(employeeDto.getEmail() != null) employee.setEmail(employeeDto.getEmail());
         if(employeeDto.getPhoneNumber() != null) employee.setPhoneNumber(employeeDto.getPhoneNumber());
+        if(employeeDto.getJobPosition() != null) {
+            employee.setJobPosition(positionRepository.findByName(employeeDto.getJobPosition().getName()).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!")));
+        }
 
         Employee updatedEmployee = employeeRepository.save(employee);
         return mapToEmployeeDto(updatedEmployee);
@@ -64,7 +72,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee saveEmployee(Employee employee) {
+        if (employee.getJobPosition() == null) 
+            throw new IllegalArgumentException("Job position was not given!");
         if (employee.getJoinDate() == null) employee.setJoinDate(LocalDate.now());
+        
+        employee.setJobPosition(positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new PositionNotFoundException("Position could not be found!")));
         return employeeRepository.save(employee);
     }
 
@@ -82,8 +94,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDto.setLastName(employee.getLastName());
         employeeDto.setEmail(employee.getEmail());
         employeeDto.setPhoneNumber(employee.getPhoneNumber());
-        employeeDto.setJobPosition(employee.getJobPosition().getName());
+        employeeDto.setJoinDate(employee.getJoinDate());
+
+        Position position = positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!"));
+        employeeDto.setJobPosition(mapToPosiotionDto(position));
+
 
         return employeeDto;
+    }
+
+    private PositionDto mapToPosiotionDto(Position position) {
+        PositionDto positionDto = new PositionDto();
+
+        positionDto.setId(position.getId());
+        positionDto.setName(position.getName());
+        positionDto.setDepartmentName(position.getDepartment().getName());
+
+        return positionDto;
     }
 }

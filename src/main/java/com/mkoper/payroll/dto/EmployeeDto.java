@@ -9,18 +9,19 @@ public class EmployeeDto {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private String jobPosition;
+    private PositionDto jobPosition;
     private LocalDate joinDate;
 
     public EmployeeDto() {}
 
-    public EmployeeDto(Long id, LocalDate dateOfBirth, String firstName, String lastName, String email, String phoneNumber, LocalDate joinDate) {
+    public EmployeeDto(Long id, LocalDate dateOfBirth, String firstName, String lastName, String email, String phoneNumber, PositionDto jobPosition, LocalDate joinDate) {
         this.id = id;
         this.dateOfBirth = dateOfBirth;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.jobPosition = jobPosition;
         this.joinDate = joinDate;
     }
 
@@ -72,11 +73,11 @@ public class EmployeeDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getJobPosition() {
+    public PositionDto getJobPosition() {
         return jobPosition;
     }
 
-    public void setJobPosition(String jobPosition) {
+    public void setJobPosition(PositionDto jobPosition) {
         this.jobPosition = jobPosition;
     }
 

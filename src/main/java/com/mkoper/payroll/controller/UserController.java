@@ -27,15 +27,13 @@ public class UserController {
         return userService.getAll();
     }
 
-    // Get user with given ID
-    @GetMapping("user/id={userId}")
-    public ResponseEntity<UserDto> getUserId(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(userService.getUserById(userId));
-    }
-
-    // Get user with given username
-    @GetMapping("user/{username}")
-    public ResponseEntity<UserDto> getUserUsername(@PathVariable("username") String username) {
-        return ResponseEntity.ok(userService.getUserByUsername(username));
+    // Get user with given username or ID
+    @GetMapping("user/{userString}")
+    public ResponseEntity<UserDto> getUserUsername(@PathVariable("userString") String userString) {
+        try {
+            return ResponseEntity.ok(userService.getUserById(Long.parseLong(userString)));
+        } catch (Exception e) {
+            return ResponseEntity.ok(userService.getUserByUsername(userString));
+        }
     }
 }

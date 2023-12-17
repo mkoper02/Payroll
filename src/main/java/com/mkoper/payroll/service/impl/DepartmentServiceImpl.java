@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.DepartmentDto;
 import com.mkoper.payroll.exceptions.DepartmentNotFoundException;
@@ -11,6 +12,7 @@ import com.mkoper.payroll.model.Department;
 import com.mkoper.payroll.repository.DepartmentRepository;
 import com.mkoper.payroll.service.DepartmentService;
 
+@Service
 public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
@@ -69,6 +71,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentDto.setCountry(department.getCountry());
         departmentDto.setCity(department.getCity());
         departmentDto.setStreet(department.getStreet());
+        departmentDto.setPositions(department.getJobPositions().stream().map((jobPosition) -> jobPosition.getName()).collect(Collectors.toList()));
 
         return departmentDto;
     }
