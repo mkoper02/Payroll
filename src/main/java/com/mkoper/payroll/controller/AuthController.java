@@ -77,7 +77,7 @@ public class AuthController {
 
         user.setEmployee(employee);
 
-        if (registerDto.getUsername() == null) {
+        if (registerDto.getUsername() == null && registerDto.getPassword() == null) {
             String usernamePassword = removePolishSigns(employee.getFirstName().substring(0, 3) + employee.getLastName().substring(0, 3) + employee.getId().toString().toLowerCase());
 
             user.setUsername(usernamePassword);

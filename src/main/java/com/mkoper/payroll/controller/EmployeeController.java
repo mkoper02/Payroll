@@ -61,9 +61,6 @@ public class EmployeeController {
 	@DeleteMapping("employee/delete/{employeeId}")
 	public ResponseEntity<String> deleteEmployee(@PathVariable("employeeId") Long employeeId) {
 		employeeService.deleteEmployeeId(employeeId);
-
-		// TODO: when delete an employee we also delete the salary, enrollment, etc. Add delete service for other models
-
 		return new ResponseEntity<>("Employee deleted", HttpStatus.OK);
 	}
 }

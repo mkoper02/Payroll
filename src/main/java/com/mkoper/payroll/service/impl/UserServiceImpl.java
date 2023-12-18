@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
         return mapToUserDto(user);
     }
     
+    @Override
+    public void deleteUserId(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
     private UserDto mapToUserDto(UserEntity user) {
         UserDto userDto = new UserDto();
 

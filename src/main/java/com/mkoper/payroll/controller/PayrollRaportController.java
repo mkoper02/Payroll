@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,5 +50,19 @@ public class PayrollRaportController {
     @PutMapping("payrollraport/update")
     public ResponseEntity<PayrollRaportDto> updatePayrollRaport(@RequestBody PayrollRaportDto payrollRaportDto) {
         return new ResponseEntity<>(payrollRaportService.updatePayrollRaport(payrollRaportDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("payrollraport/delete/{employeeId}")
+    public ResponseEntity<String> deletePayrollRaport(@PathVariable Long employeeId, @RequestBody DateDto dateDto) {
+        payrollRaportService.deleteByEmployeeIdDate(dateDto, employeeId);
+
+        return new ResponseEntity<>("Payroll raport deleted", HttpStatus.OK);
+    }
+
+    @DeleteMapping("payrollraport/delete/{employeeId}/all")
+    public ResponseEntity<String> deletePayrollRaportAll(@PathVariable Long employeeId) {
+        payrollRaportService.deleteByEmployeeId(employeeId);
+
+        return new ResponseEntity<>("Payroll raport deleted", HttpStatus.OK);
     }
 }

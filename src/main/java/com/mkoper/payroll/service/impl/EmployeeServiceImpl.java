@@ -17,16 +17,23 @@ import com.mkoper.payroll.model.Position;
 import com.mkoper.payroll.repository.EmployeeRepository;
 import com.mkoper.payroll.repository.PositionRepository;
 import com.mkoper.payroll.service.EmployeeService;
+import com.mkoper.payroll.service.PayrollRaportService;
+import com.mkoper.payroll.service.UserService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     
     @Autowired private EmployeeRepository employeeRepository;
     @Autowired private PositionRepository positionRepository;
+
+    @Autowired private PayrollRaportService payrollRaportService;
+    @Autowired private UserService userService;
     
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, PositionRepository positionRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, PositionRepository positionRepository, PayrollRaportService payrollRaportService, UserService userService) {
         this.employeeRepository = employeeRepository;
         this.positionRepository = positionRepository;
+        this.payrollRaportService = payrollRaportService;
+        this.userService = userService;
     }
 
     @Override
@@ -82,7 +89,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployeeId(Long id) {
-        employeeRepository.delete(employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+
+        // delete all payroll raports and user
+        payrollRaportService.deleteByEmployeeId(id);
+        userService.deleteUserId(id);
+
+        employeeRepository.delete(employee);
     }
 
     private EmployeeDto mapToEmployeeDto(Employee employee){
@@ -98,7 +111,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Position position = positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!"));
         employeeDto.setJobPosition(mapToPosiotionDto(position));
-
 
         return employeeDto;
     }

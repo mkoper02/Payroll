@@ -20,4 +20,10 @@ public interface PayrollRaportService {
 
     // update payroll raport
     public PayrollRaportDto updatePayrollRaport(PayrollRaportDto payrollRaportDto);
+
+    // delete payroll raport with given employeeID and given date
+    public void deleteByEmployeeIdDate(DateDto dateDto, Long employeeId);
+    
+    // delete all payroll raports with given employee ID
+    public void deleteByEmployeeId(Long employeeId);
 }

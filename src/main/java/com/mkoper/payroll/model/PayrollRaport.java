@@ -3,6 +3,7 @@ package com.mkoper.payroll.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,18 +53,18 @@ public class PayrollRaport {
     private Salary salary;
 
     // relation with benefit table
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
-        name = "payrollraport_benefit",
+        name = "payroll_raport_benefit",
         joinColumns = @JoinColumn(name = "payrollraport_id"),
         inverseJoinColumns = @JoinColumn(name = "benefit_id")
     )
     private List<Benefit> payrollraportBenefits;
 
     // relation with tax table
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
-        name = "payrollraport_tax",
+        name = "payroll_raport_tax",
         joinColumns = @JoinColumn(name = "payrollraport_id"),
         inverseJoinColumns = @JoinColumn(name = "tax_id")
     )

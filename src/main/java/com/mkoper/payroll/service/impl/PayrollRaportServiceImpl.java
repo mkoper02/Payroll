@@ -13,6 +13,8 @@ import com.mkoper.payroll.dto.DateDto;
 import com.mkoper.payroll.dto.PayrollRaportDto;
 import com.mkoper.payroll.dto.TaxDto;
 import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
+import com.mkoper.payroll.exceptions.PayrollRaportNotFoundException;
+import com.mkoper.payroll.exceptions.WorkingLogNotFoundException;
 import com.mkoper.payroll.model.Benefit;
 import com.mkoper.payroll.model.PayrollRaport;
 import com.mkoper.payroll.model.Tax;
@@ -70,121 +72,14 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         payrollRaport.setDate(LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1));
         payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(payrollRaport.getDate(), payrollRaport.getDate(), payrollRaport.getEmployee().getId()).get(0));
 
-        // calculate bonus 
-        Float bonus = 0f;
-
-        // pay extra for overtime
-        if (payrollRaport.getWorkingLog().getHoursWorked() > payrollRaport.getSalary().getHours()) {
-            bonus += payrollRaport.getSalary().getHourlyWage() * (payrollRaport.getWorkingLog().getHoursWorked() - payrollRaport.getSalary().getHours()) * 1.2f;
-        }
-        // pay extra every fourth month
-        if (payrollRaport.getDate().getMonthValue() % 3 == 0) bonus += 200;
-
-        payrollRaport.setBonus(bonus);
-        payrollRaportDto.setBonus(bonus);
-        
-        // set taxes
-        List<Tax> taxes = new ArrayList<>();
-
-        // total amount (always asume that month has 4 weeks)
-        Float totalAmount = (payrollRaport.getSalary().getHours() * payrollRaport.getSalary().getHourlyWage() * 4) + bonus;
-        payrollRaport.setTotalAmount(totalAmount);
-        payrollRaportDto.setTotalAmount(totalAmount);
-
-        // people below age 26 dont pay taxes 
-        if (Period.between(payrollRaport.getEmployee().getDateOfBirth(), LocalDate.now()).getYears() <= 26)
-            payrollRaport.setPayrollraportTaxes(null);
-
-        // Umowa o prace: zdrowotny, emerytalny, rentowy, chorobowy, dochodowy
-        else if (payrollRaport.getSalary().getContractType().equals("Umowa o pracę")) {
-            taxes.add(taxRepository.findByName("Zdrowotny").get());
-            taxes.add(taxRepository.findByName("Emerytalny").get());
-            taxes.add(taxRepository.findByName("Rentowy").get());
-            taxes.add(taxRepository.findByName("Chorobowy").get());
-            taxes.add(taxRepository.findByName("Dochodowy").get());
-        }
-
-        // Umowa-zlecenie: zdrowotny, dochodowy
-        else if (payrollRaport.getSalary().getContractType().equals("Umowa-zlecenie")) {
-            taxes.add(taxRepository.findByName("Zdrowotny").get());
-            taxes.add(taxRepository.findByName("Dochodowy").get());
-        }
-
-        payrollRaport.setPayrollraportTaxes(taxes);
-
-        // save taxes
-        List<TaxDto> taxesDto = new ArrayList<>();
-        payrollRaport.getPayrollraportTaxes().forEach(tax -> {
-            TaxDto taxDto = new TaxDto();
-        
-            taxDto.setName(tax.getName());
-            taxDto.setAmount(tax.getCost() * totalAmount);
-
-            taxesDto.add(taxDto);
-        });
-        payrollRaportDto.setTaxes(taxesDto);
-
-        // set benefits
-        List<Benefit> benefits = new ArrayList<>();
-        if (!payrollRaportDto.getBenefits().equals(null)) {
-
-            payrollRaportDto.getBenefits().forEach(benefit -> {
-                switch (benefit.getName().toLowerCase()) {
-                    case "siłownia":
-                        benefits.add(benefitRepository.findByName("Siłownia").get());
-                        break;
-                
-                    case "catering":
-                        benefits.add(benefitRepository.findByName("Catering").get());
-                        break;
-    
-                    case "basen":
-                        benefits.add(benefitRepository.findByName("Basen").get());
-                        break;
-    
-                    case "podstawowy pakiet medyczny":
-                        benefits.add(benefitRepository.findByName("Podstawowy pakiet medyczny").get());
-                        break;
-    
-                    case "standardowy pakiet medyczny":
-                        benefits.add(benefitRepository.findByName("Standardowy pakiet medyczny").get());
-                        break;
-    
-                    case "rozszerzony pakiet medyczny":
-                        benefits.add(benefitRepository.findByName("Rozszerzony pakiet medyczny").get());
-                        break;
-    
-                    case "ubezpieczenie na życie":
-                        benefits.add(benefitRepository.findByName("Ubezpieczenie na życie").get());
-                        break;
-    
-                    case "bilet mpk":
-                        benefits.add(benefitRepository.findByName("Bilet MPK").get());
-                        break;
-    
-                    default:
-                        break;
-                }
-            });
-        }
-
-        payrollRaport.setPayrollraportBenefits(benefits);
-        payrollRaportDto.setBenefits(payrollRaport.getPayrollraportBenefits());
-
-        // calculate net salary
-        Float netSalary = totalAmount;
-        for (TaxDto taxDto : taxesDto) {
-            netSalary -= taxDto.getAmount();
-        }
-        for (Benefit benefit : benefits) {
-            netSalary -=benefit.getCost();
-        }
-        payrollRaport.setNetSalary(netSalary);
-        payrollRaportDto.setNetSalary(netSalary);
+        payrollRaport.setBonus(calculateBonus(payrollRaport));
+        payrollRaport.setTotalAmount(calculateTotalAmount(payrollRaport));
+        payrollRaport.setPayrollraportTaxes(creareTaxList(payrollRaport));
+        payrollRaport.setPayrollraportBenefits(createBenefitList(payrollRaportDto));
+        payrollRaport.setNetSalary(calculateNetSalary(payrollRaport));
 
         payrollRaportRepository.save(payrollRaport);
-        payrollRaportDto.setId(payrollRaport.getId());
-        return payrollRaportDto;
+        return mapToPayrollRaportDto(payrollRaport);
     }
 
     @Override
@@ -194,90 +89,40 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         LocalDate currentMonth = LocalDate.of(date.getYear(), date.getMonth(), 1);
 
         // check if payroll raport for given month already exists
-        if (payrollRaportRepository.findByDateBetween(currentMonth, currentMonth).size() != 0) {;
+        if (payrollRaportRepository.findByDateBetween(currentMonth, currentMonth).size() != 0) {
             throw new IllegalArgumentException("Payroll raports already exist!");
         }
         
         if (date.getMonth() == 1) lastMonthDate = LocalDate.of(date.getYear() - 1, 12, 1);
         else lastMonthDate = LocalDate.of(date.getYear(), date.getMonth() - 1, 1);
 
-        List<PayrollRaport> payrollRaports = payrollRaportRepository.findByDateBetween(lastMonthDate, currentMonth);
-        List<PayrollRaportDto> payrollRaportDtos = new ArrayList<>();
-
-        for (PayrollRaport lastMonthRaport : payrollRaports) {
+        List<PayrollRaportDto> payrollRaports = new ArrayList<>();
+        
+        for (PayrollRaport lastMonthRaport :  payrollRaportRepository.findByDateBetween(lastMonthDate, currentMonth)) {
             PayrollRaport payrollRaport = new PayrollRaport();
-
+            
             payrollRaport.setEmployee(lastMonthRaport.getEmployee());
             payrollRaport.setSalary(lastMonthRaport.getSalary());
             payrollRaport.setDate(currentMonth);
-            payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(lastMonthDate, currentMonth, payrollRaport.getEmployee().getId()).get(0));
 
-            List<Benefit> benefits = lastMonthRaport.getPayrollraportBenefits();
-            payrollRaport.setPayrollraportBenefits(benefits);
-            // payrollRaport.setPayrollraportBenefits(null);
-
-            Float bonus = 0f;
-            if (payrollRaport.getWorkingLog().getHoursWorked() > payrollRaport.getSalary().getHours()) {
-                bonus += payrollRaport.getSalary().getHourlyWage() * (payrollRaport.getWorkingLog().getHoursWorked() - payrollRaport.getSalary().getHours()) * 1.2f;
+            if (workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, payrollRaport.getEmployee().getId()).isEmpty()) {
+                throw new WorkingLogNotFoundException("Working log for employee " + payrollRaport.getEmployee().getId() + " could not be found!");
             }
-            // pay extra every fourth month
-            if (payrollRaport.getDate().getMonthValue() % 3 == 0) bonus += 200;
-
-            payrollRaport.setBonus(bonus);
-
-            Float totalAmount = (payrollRaport.getSalary().getHours() * payrollRaport.getSalary().getHourlyWage() * 4) + bonus;
-            payrollRaport.setTotalAmount(totalAmount);
-
-            // set taxes    
-            List<Tax> taxes = new ArrayList<>();
-
-            // people below age 26 dont pay taxes 
-            if (Period.between(payrollRaport.getEmployee().getDateOfBirth(), LocalDate.now()).getYears() <= 26)
-                payrollRaport.setPayrollraportTaxes(null);
-
-            // Umowa o prace: zdrowotny, emerytalny, rentowy, chorobowy, dochodowy
-            else if (payrollRaport.getSalary().getContractType().equals("Umowa o pracę")) {
-                taxes.add(taxRepository.findByName("Zdrowotny").get());
-                taxes.add(taxRepository.findByName("Emerytalny").get());
-                taxes.add(taxRepository.findByName("Rentowy").get());
-                taxes.add(taxRepository.findByName("Chorobowy").get());
-                taxes.add(taxRepository.findByName("Dochodowy").get());
-            }
-
-            // Umowa-zlecenie: zdrowotny, dochodowy
-            else if (payrollRaport.getSalary().getContractType().equals("Umowa-zlecenie")) {
-                taxes.add(taxRepository.findByName("Zdrowotny").get());
-                taxes.add(taxRepository.findByName("Dochodowy").get());
-            }
-
-            payrollRaport.setPayrollraportTaxes(taxes);
-
-            List<TaxDto> taxesDto = new ArrayList<>();
-            payrollRaport.getPayrollraportTaxes().forEach(tax -> {
-                TaxDto taxDto = new TaxDto();
+            payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, payrollRaport.getEmployee().getId()).get(0));
             
-                taxDto.setName(tax.getName());
-                taxDto.setAmount(tax.getCost() * totalAmount);
+            payrollRaport.setBonus(calculateBonus(payrollRaport));
+            payrollRaport.setTotalAmount(calculateTotalAmount(payrollRaport));
+            
+            payrollRaport.setPayrollraportBenefits(createBenefitList(mapToPayrollRaportDto(lastMonthRaport)));
+            payrollRaport.setPayrollraportTaxes(creareTaxList(payrollRaport));
 
-                taxesDto.add(taxDto);
-            });
+            payrollRaport.setNetSalary(calculateNetSalary(payrollRaport));
 
-            // calculate net salary
-            Float netSalary = totalAmount;
-            for (TaxDto taxDto : taxesDto) {
-                netSalary -= taxDto.getAmount();
-            }
-            for (Benefit benefit : payrollRaport.getPayrollraportBenefits()) {
-                netSalary -=benefit.getCost();
-            }
-            payrollRaport.setNetSalary(netSalary);
-
-            // payrollRaportRepository.save(payrollRaport);
-            payrollRaportDtos.add(mapToPayrollRaportDto(payrollRaport));
-
+            payrollRaportRepository.save(payrollRaport);
+            payrollRaports.add(mapToPayrollRaportDto(payrollRaport));
         }
 
-        return payrollRaportDtos;
+        return payrollRaports;
     }
 
     public PayrollRaportDto updatePayrollRaport(PayrollRaportDto payrollRaportDto) {
@@ -288,85 +133,58 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         if (payrollRaportDto.getMonth() == null || payrollRaportDto.getYear() == null) {
             throw new IllegalArgumentException("Date was not given!");
         }
+        
+        // get payroll raport
+        // check if working log for given payroll raport exists
+        PayrollRaport oldPayrollRaport = new PayrollRaport();
+        try {
+            oldPayrollRaport = payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), payrollRaportDto.getEmployeeId()).get(0);
+        } catch (Exception e) {
+            throw new PayrollRaportNotFoundException("Payroll raport was not found!");
+        }
 
-        PayrollRaport payrollRaport = payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), payrollRaportDto.getEmployeeId()).get(0);
+        PayrollRaport newPayrollRaport = new PayrollRaport();
 
+        newPayrollRaport.setEmployee(oldPayrollRaport.getEmployee());
+        newPayrollRaport.setDate(oldPayrollRaport.getDate());
+        newPayrollRaport.setSalary(oldPayrollRaport.getSalary());
+        newPayrollRaport.setWorkingLog(oldPayrollRaport.getWorkingLog());
+
+        // update bonus
         if (payrollRaportDto.getBonus() != null) {
-            payrollRaport.setBonus(payrollRaportDto.getBonus());
-            payrollRaport.setTotalAmount(payrollRaport.getTotalAmount() + payrollRaport.getBonus());
+            newPayrollRaport.setBonus(payrollRaportDto.getBonus());
+            newPayrollRaport.setTotalAmount(oldPayrollRaport.getTotalAmount() + newPayrollRaport.getBonus());
         }
 
-        // set benefits
-        List<Benefit> benefits = new ArrayList<>();
-        if (payrollRaportDto.getBenefits() != null) {
+        newPayrollRaport.setPayrollraportBenefits(createBenefitList(payrollRaportDto));
+        newPayrollRaport.setPayrollraportTaxes(creareTaxList(newPayrollRaport));
 
-            payrollRaportDto.getBenefits().forEach(benefit -> {
-                switch (benefit.getName().toLowerCase()) {
-                    case "siłownia":
-                        benefits.add(benefitRepository.findByName("Siłownia").get());
-                        break;
-                
-                    case "catering":
-                        benefits.add(benefitRepository.findByName("Catering").get());
-                        break;
-    
-                    case "basen":
-                        benefits.add(benefitRepository.findByName("Basen").get());
-                        break;
-    
-                    case "podstawowy pakiet medyczny":
-                        benefits.add(benefitRepository.findByName("Podstawowy pakiet medyczny").get());
-                        break;
-    
-                    case "standardowy pakiet medyczny":
-                        benefits.add(benefitRepository.findByName("Standardowy pakiet medyczny").get());
-                        break;
-    
-                    case "rozszerzony pakiet medyczny":
-                        benefits.add(benefitRepository.findByName("Rozszerzony pakiet medyczny").get());
-                        break;
-    
-                    case "ubezpieczenie na życie":
-                        benefits.add(benefitRepository.findByName("Ubezpieczenie na życie").get());
-                        break;
-    
-                    case "bilet mpk":
-                        benefits.add(benefitRepository.findByName("Bilet MPK").get());
-                        break;
-    
-                    default:
-                        break;
-                }
-            });
+        newPayrollRaport.setNetSalary(calculateNetSalary(newPayrollRaport));
+
+        payrollRaportRepository.deleteById(oldPayrollRaport.getId());
+        payrollRaportRepository.save(newPayrollRaport);
+
+        return mapToPayrollRaportDto(newPayrollRaport);
+    }
+
+    public void deleteByEmployeeIdDate(DateDto dateDto, Long employeeId) {
+        PayrollRaport payrollRaport = new PayrollRaport();
+
+        try {
+            payrollRaport = payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(dateDto.getYear(), dateDto.getMonth(), 1), LocalDate.of(dateDto.getYear(), dateDto.getMonth(), 1), employeeId).get(0);
+        } catch (Exception e) {
+            throw new PayrollRaportNotFoundException("Payroll raport could not be found!");
         }
-        
-        payrollRaport.setPayrollraportBenefits(benefits);
-        // TODO: delete relation with benefits
 
-        // save taxes
-        List<TaxDto> taxesDto = new ArrayList<>();
-        payrollRaport.getPayrollraportTaxes().forEach(tax -> {
-            TaxDto taxDto = new TaxDto();
-        
-            taxDto.setName(tax.getName());
-            taxDto.setAmount(tax.getCost() * payrollRaport.getTotalAmount());
+        payrollRaportRepository.delete(payrollRaport);
+    }
 
-            taxesDto.add(taxDto);
-        });
-        payrollRaportDto.setTaxes(taxesDto);
+    public void deleteByEmployeeId(Long employeeId) {
+        List<PayrollRaport> payrollRaports = payrollRaportRepository.findByEmployeeId(employeeId);
 
-        // calculate net salary
-        Float netSalary = payrollRaport.getTotalAmount();
-        for (TaxDto taxDto : taxesDto) {
-            netSalary -= taxDto.getAmount();
+        for (PayrollRaport payrollRaport : payrollRaports) {
+            payrollRaportRepository.delete(payrollRaport);
         }
-        for (Benefit benefit : payrollRaport.getPayrollraportBenefits()) {
-            netSalary -=benefit.getCost();
-        }
-        payrollRaport.setNetSalary(netSalary);
-
-
-        return mapToPayrollRaportDto(payrollRaport);
     }
 
     private PayrollRaportDto mapToPayrollRaportDto(PayrollRaport payrollRaport) {
@@ -376,23 +194,155 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         payrollRaportDto.setEmployeeId(payrollRaport.getEmployee().getId());
         payrollRaportDto.setYear(payrollRaport.getDate().getYear());
         payrollRaportDto.setMonth(payrollRaport.getDate().getMonthValue());
+        payrollRaportDto.setHoursWorked(payrollRaport.getWorkingLog().getHoursWorked());
         payrollRaportDto.setBonus(payrollRaport.getBonus());
         payrollRaportDto.setNetSalary(payrollRaport.getNetSalary());
         payrollRaportDto.setBonus(payrollRaport.getBonus());
         payrollRaportDto.setBenefits(payrollRaport.getPayrollraportBenefits());
         payrollRaportDto.setTotalAmount(payrollRaport.getTotalAmount());
-
-        List<TaxDto> taxesDto = new ArrayList<>();
-        payrollRaport.getPayrollraportTaxes().forEach(tax -> {
-            TaxDto taxDto = new TaxDto();
-        
-            taxDto.setName(tax.getName());
-            taxDto.setAmount(tax.getCost() * payrollRaportDto.getTotalAmount());
-
-            taxesDto.add(taxDto);
-        });
-        payrollRaportDto.setTaxes(taxesDto);
+        payrollRaportDto.setTaxes(calculateTaxesCost(payrollRaport));
 
         return payrollRaportDto;
+    }
+
+    // return list of taxDto - amount due to pay for idividual tax
+    private List<TaxDto> calculateTaxesCost(PayrollRaport payrollRaport) {
+        List<TaxDto> taxDtoList = new ArrayList<>();
+
+        payrollRaport.getPayrollraportTaxes().forEach(tax -> {
+            TaxDto taxDto = new TaxDto();
+
+            taxDto.setName(tax.getName());
+            taxDto.setAmount(tax.getCost() * payrollRaport.getTotalAmount());
+
+            taxDtoList.add(taxDto);
+        });
+
+        return taxDtoList;
+    }
+
+    // create list of taxes that given employee has to pay
+    private List<Tax> creareTaxList(PayrollRaport payrollRaport) {
+        List<Tax> taxList = new ArrayList<>();
+
+        // people below age 26 dont pay taxes 
+        if (Period.between(payrollRaport.getEmployee().getDateOfBirth(), LocalDate.now()).getYears() <= 26)
+            return taxList;
+
+        // Umowa o prace: zdrowotny, emerytalny, rentowy, chorobowy, dochodowy
+        else if (payrollRaport.getSalary().getContractType().equals("Umowa o prace")) {
+            taxList.add(taxRepository.findByName("Zdrowotny").get());
+            taxList.add(taxRepository.findByName("Emerytalny").get());
+            taxList.add(taxRepository.findByName("Rentowy").get());
+            taxList.add(taxRepository.findByName("Chorobowy").get());
+            taxList.add(taxRepository.findByName("Dochodowy").get());
+        }
+
+        // Umowa-zlecenie: zdrowotny, dochodowy
+        else if (payrollRaport.getSalary().getContractType().equals("Umowa-zlecenie")) {
+            taxList.add(taxRepository.findByName("Zdrowotny").get());
+            taxList.add(taxRepository.findByName("Dochodowy").get());
+        }
+
+        return taxList;
+    }
+
+    // create list of benefits that given employee has chosen
+    private List<Benefit> createBenefitList(PayrollRaportDto payrollRaportDto) {
+        List<Benefit> benefitList = new ArrayList<>();
+        
+        if (!payrollRaportDto.getBenefits().equals(null)) {
+
+            payrollRaportDto.getBenefits().forEach(benefit -> {
+                switch (benefit.getName().toLowerCase()) {
+                    case "siłownia":
+                        benefitList.add(benefitRepository.findByName("Siłownia").get());
+                        break;
+                
+                    case "catering":
+                        benefitList.add(benefitRepository.findByName("Catering").get());
+                        break;
+    
+                    case "basen":
+                        benefitList.add(benefitRepository.findByName("Basen").get());
+                        break;
+    
+                    case "podstawowy pakiet medyczny":
+                        benefitList.add(benefitRepository.findByName("Podstawowy pakiet medyczny").get());
+                        break;
+    
+                    case "standardowy pakiet medyczny":
+                        benefitList.add(benefitRepository.findByName("Standardowy pakiet medyczny").get());
+                        break;
+    
+                    case "rozszerzony pakiet medyczny":
+                        benefitList.add(benefitRepository.findByName("Rozszerzony pakiet medyczny").get());
+                        break;
+    
+                    case "ubezpieczenie na życie":
+                        benefitList.add(benefitRepository.findByName("Ubezpieczenie na życie").get());
+                        break;
+    
+                    case "bilet mpk":
+                        benefitList.add(benefitRepository.findByName("Bilet MPK").get());
+                        break;
+    
+                    default:
+                        break;
+                }
+            });
+        }
+
+
+        return benefitList;
+    }
+
+    // calculate bonus for given payroll raport
+    private Float calculateBonus(PayrollRaport payrollRaport) {
+        Float bonus = 0f;
+
+        // pay extra for overtime
+        if (payrollRaport.getWorkingLog().getHoursWorked() > payrollRaport.getSalary().getHours()) {
+            bonus += payrollRaport.getSalary().getHourlyWage() * (payrollRaport.getWorkingLog().getHoursWorked() - payrollRaport.getSalary().getHours()) * 1.2f;
+        }
+
+        // pay extra every third month
+        if (payrollRaport.getDate().getMonthValue() % 3 == 0) bonus += 200;
+
+        return bonus;
+    }
+
+    // calculate total amount for given payroll raport
+    private Float calculateTotalAmount(PayrollRaport payrollRaport) {
+        Float totalAmount = 0f;
+
+        // check if employee is paid hourly or for full month
+        if (payrollRaport.getSalary().getHours() != null) {
+            // total amount (always asume that month has 4 weeks)
+            totalAmount = (payrollRaport.getWorkingLog().getHoursWorked() * payrollRaport.getSalary().getHourlyWage() * 4) + payrollRaport.getBonus();
+        }
+
+        else {
+            totalAmount = payrollRaport.getSalary().getHourlyWage() + payrollRaport.getBonus();
+        }
+
+        return totalAmount;
+    }
+
+    // calculate net salary for given payroll raport
+    private Float calculateNetSalary(PayrollRaport payrollRaport) {
+        Float netSalary = payrollRaport.getTotalAmount();
+
+        // taxes
+        for (TaxDto taxDto : calculateTaxesCost(payrollRaport)) {
+            netSalary -= taxDto.getAmount();
+        }
+
+        // benefits
+        for (Benefit benefit : payrollRaport.getPayrollraportBenefits()) {
+            netSalary -= benefit.getCost();
+        }
+
+        return netSalary;
     }
 }

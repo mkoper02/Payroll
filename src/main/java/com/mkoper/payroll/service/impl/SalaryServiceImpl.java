@@ -56,6 +56,9 @@ public class SalaryServiceImpl implements SalaryService {
         if (salaryRepository.existsByEmployeeId(salary.getId()))
             throw new IllegalArgumentException("Salary for this employee already exists!");
 
+        if (salary.getHourlyWage() == null) 
+            throw new IllegalArgumentException("Wage was not given!");
+
         if (validContractType(salary.getContractType())) {
             salary.setEmployee(employeeRepository.findById(salary.getId()).orElseThrow(() -> new SalaryNotFoundException("Salary could not be found!")));
             return salaryRepository.save(salary);
