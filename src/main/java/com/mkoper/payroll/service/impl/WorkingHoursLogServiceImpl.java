@@ -47,15 +47,16 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
             throw new IllegalArgumentException("Working log already exists!");
         }
 
+        if(workingHoursLogDto.getMonth() == null || workingHoursLogDto.getYear() == null) {
+            throw new IllegalArgumentException("Date was not given!");
+        }
+
         WorkingHoursLog workingHoursLog = new WorkingHoursLog();
 
         workingHoursLog.setEmployee(employeeRepository.findById(workingHoursLogDto.getEmployeeId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
         workingHoursLog.setHoursWorked(workingHoursLogDto.getHoursWorked());
         workingHoursLog.setPayrollRaport(null);
-        if(workingHoursLogDto.getMonth() == null || workingHoursLogDto.getYear() == null) 
-            workingHoursLog.setDate(LocalDate.now());
-        else 
-            workingHoursLog.setDate(LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1));
+        workingHoursLog.setDate(LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1));
 
         return mapToWorkingHoursLogDto(workingHoursLogRepository.save(workingHoursLog));
     }

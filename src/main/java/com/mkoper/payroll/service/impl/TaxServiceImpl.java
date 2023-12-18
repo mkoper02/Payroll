@@ -46,7 +46,7 @@ public class TaxServiceImpl implements TaxService {
 
     @Override
     public void deleteTax(Long taxId) {
-        Tax tax = taxRepository.findById(taxId).get();
+        Tax tax = taxRepository.findById(taxId).orElseThrow(() -> new TaxNotFoundException("Tax with given ID could not be found!"));
         taxRepository.delete(tax);
     }
 }

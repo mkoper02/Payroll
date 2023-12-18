@@ -29,6 +29,9 @@ public class PayrollRaport {
     @Column(nullable = true)
     private Float bonus;
 
+    @Column(name = "total_amount", nullable = false)
+    private Float totalAmount;
+
     @Column(name = "net_salary", nullable = false)
     private Float netSalary;
 
@@ -68,19 +71,21 @@ public class PayrollRaport {
     
     public PayrollRaport() {}
 
-    public PayrollRaport(Long id, LocalDate date, Float bonus, Float netSalary, Employee employee, WorkingHoursLog workingLog, Salary salary) {
+    public PayrollRaport(Long id, LocalDate date, Float bonus, Float totalAmount, Float netSalary, Employee employee, WorkingHoursLog workingLog, Salary salary) {
         this.id = id;
         this.date = date;
         this.bonus = bonus;
+        this.totalAmount = totalAmount;
         this.netSalary = netSalary;
         this.employee = employee;
         this.workingLog = workingLog;
         this.salary = salary;
     }
 
-    public PayrollRaport(LocalDate date, Float bonus, Float netSalary, Employee employee, WorkingHoursLog workingLog, Salary salary) {
+    public PayrollRaport(LocalDate date, Float bonus, Float totalAmount, Float netSalary, Employee employee, WorkingHoursLog workingLog, Salary salary) {
         this.date = date;
         this.bonus = bonus;
+        this.totalAmount = totalAmount;
         this.netSalary = netSalary;
         this.employee = employee;
         this.workingLog = workingLog;
@@ -157,5 +162,13 @@ public class PayrollRaport {
 
     public void setPayrollraportTaxes(List<Tax> payrollraportTaxes) {
         this.payrollraportTaxes = payrollraportTaxes;
+    }
+
+    public Float getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Float totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

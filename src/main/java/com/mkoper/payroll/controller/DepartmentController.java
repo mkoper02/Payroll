@@ -52,7 +52,7 @@ public class DepartmentController {
     // create new department
     @PostMapping("department/create")
     public ResponseEntity<Department> addDepartment(@RequestBody Department departmentDto) {
-        return new ResponseEntity<>(departmentService.saveDepartment(departmentDto), HttpStatus.OK);
+        return new ResponseEntity<>(departmentService.saveDepartment(departmentDto), HttpStatus.CREATED);
     }
 
     // delete department with given ID

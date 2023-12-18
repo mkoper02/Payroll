@@ -15,7 +15,7 @@ public interface WorkingHoursLogService {
     // save new working log for employee with given ID
     public WorkingHoursLogDto saveWorkingLogForEmployee(WorkingHoursLogDto workingHoursLogDto);
 
-    // create and save new roking logs for all employees for given date
+    // create and save new working logs for all employees for given date
     public List<WorkingHoursLogDto> saveWorkingLogsForAll(DateDto date);
 
     // update working log from given date and for employee with given ID

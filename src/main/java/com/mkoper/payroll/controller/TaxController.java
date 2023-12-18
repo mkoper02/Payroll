@@ -38,7 +38,7 @@ public class TaxController {
 
     @PostMapping("tax/create")
     public ResponseEntity<Tax> addTax(@RequestBody Tax tax) {
-        return new ResponseEntity<>(taxService.saveTax(tax), HttpStatus.OK);
+        return new ResponseEntity<>(taxService.saveTax(tax), HttpStatus.CREATED);
     }
 
     @DeleteMapping("tax/delete/{taxId}")

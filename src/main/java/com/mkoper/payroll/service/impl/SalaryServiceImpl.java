@@ -44,7 +44,7 @@ public class SalaryServiceImpl implements SalaryService {
 
         Salary salary = salaryRepository.findById(salaryDto.getEmployeeId()).orElseThrow(() -> new SalaryNotFoundException("Salary could not be found!"));
 
-        if (salaryDto.getGrossSalary() != null) salary.setGrossSalary(salaryDto.getGrossSalary());
+        if (salaryDto.getHourlWage() != null) salary.setHourlyWage(salaryDto.getHourlWage());
         if (salaryDto.getHours() != null) salary.setHours(salaryDto.getHours());
         if (salaryDto.getContractType() != null && validContractType(salaryDto.getContractType())) salary.setContractType(salaryDto.getContractType());
 
@@ -74,7 +74,7 @@ public class SalaryServiceImpl implements SalaryService {
 
         salaryDto.setEmployeeId(salary.getId());
         salaryDto.setContractType(salary.getContractType());
-        salaryDto.setGrossSalary(salary.getGrossSalary());
+        salaryDto.setHourlyWage(salary.getHourlyWage());
         salaryDto.setHours(salary.getHours());
 
         return salaryDto;

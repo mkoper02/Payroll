@@ -2,15 +2,15 @@ package com.mkoper.payroll.dto;
 
 public class SalaryDto {
     private Long employeeId;
-    private Float grossSalary;
+    private Float hourlyWage;
     private String contractType;
     private Integer hours;
 
     public SalaryDto() {}
 
-    public SalaryDto(Long employeeId, Float grossSalary, String contractType, Integer hours) {
+    public SalaryDto(Long employeeId, Float hourlyWage, String contractType, Integer hours) {
         this.employeeId = employeeId;
-        this.grossSalary = grossSalary;
+        this.hourlyWage = hourlyWage;
         this.contractType = contractType;
         this.hours = hours;
     }
@@ -23,12 +23,12 @@ public class SalaryDto {
         this.employeeId = employeeId;
     }
 
-    public Float getGrossSalary() {
-        return grossSalary;
+    public Float getHourlWage() {
+        return hourlyWage;
     }
 
-    public void setGrossSalary(Float grossSalary) {
-        this.grossSalary = grossSalary;
+    public void setHourlyWage(Float hourlyWage) {
+        this.hourlyWage = hourlyWage;
     }
         
     public String getContractType() {

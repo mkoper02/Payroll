@@ -14,4 +14,6 @@ public interface PayrollRaportRepository extends JpaRepository<PayrollRaport, Lo
     List<PayrollRaport> findByEmployeeId(Long employeeId);
 
     List<PayrollRaport> findByDateBetweenAndEmployeeId(LocalDate start, LocalDate end, Long employeeId);
+
+    List<PayrollRaport> findByDateBetween(LocalDate start, LocalDate end);
 }

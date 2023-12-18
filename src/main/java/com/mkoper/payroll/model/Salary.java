@@ -22,8 +22,8 @@ public class Salary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "gross_salary", nullable = false)
-    private Float grossSalary;
+    @Column(name = "hourly_wage", nullable = false)
+    private Float hourlyWage;
 
     @Column(name = "contract_type", nullable = false) 
     private String contractType;
@@ -45,17 +45,17 @@ public class Salary {
 
     public Salary() {}
 
-    public Salary(Long id, Float grossSalary, String contractType, Integer hours, Employee employee, List<PayrollRaport> payrollRaports) {
+    public Salary(Long id, Float hourlyWage, String contractType, Integer hours, Employee employee, List<PayrollRaport> payrollRaports) {
         this.id = id;
-        this.grossSalary = grossSalary;
+        this.hourlyWage = hourlyWage;
         this.contractType = contractType;
         this.hours = hours;
         this.employee = employee;
         this.payrollRaports = payrollRaports;
     }
 
-    public Salary(Float grossSalary, String contractType, Integer hours, Employee employee, List<PayrollRaport> payrollRaports) {
-        this.grossSalary = grossSalary;
+    public Salary(Float hourlyWage, String contractType, Integer hours, Employee employee, List<PayrollRaport> payrollRaports) {
+        this.hourlyWage = hourlyWage;
         this.contractType = contractType;
         this.hours = hours;
         this.employee = employee;
@@ -70,12 +70,12 @@ public class Salary {
         this.id = id;
     }
 
-    public Float getGrossSalary() {
-        return grossSalary;
+    public Float getHourlyWage() {
+        return hourlyWage;
     }
 
-    public void setGrossSalary(Float grossSalary) {
-        this.grossSalary = grossSalary;
+    public void setHourlyWage(Float hourlyWage) {
+        this.hourlyWage = hourlyWage;
     }
 
     public String getContractType() {

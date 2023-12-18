@@ -54,7 +54,7 @@ public class PositionController {
     // create new position
     @PostMapping("position/create")
     public ResponseEntity<Position> addPosition(@RequestBody Position position) {
-        return new ResponseEntity<>(positionService.savePosition(position), HttpStatus.OK);
+        return new ResponseEntity<>(positionService.savePosition(position), HttpStatus.CREATED);
     }
 
     // update position with given ID

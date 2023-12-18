@@ -1,22 +1,32 @@
 package com.mkoper.payroll.dto;
 
-import java.time.LocalDate;
+import java.util.List;
+
+import com.mkoper.payroll.model.Benefit;
 
 public class PayrollRaportDto {
     private Long id;
     private Long employeeId;
-    private LocalDate date;
+    private Integer year;
+    private Integer month;
     private Float bonus;
     private Float netSalary;
+    private Float totalAmount;
+    private List<Benefit> benefits;
+    private List<TaxDto> taxes;
     
     public PayrollRaportDto() {}
     
-    public PayrollRaportDto(Long id, Long employeeId, LocalDate date, Float bonus, Float netSalary) {
+    public PayrollRaportDto(Long id, Long employeeId, Integer year, Integer month, Float bonus, Float netSalary, Float totalAmount, List<Benefit> benefits, List<TaxDto> taxes) {
         this.id = id;
         this.employeeId = employeeId;
-        this.date = date;
+        this.year = year;
+        this.month = month;
         this.bonus = bonus;
         this.netSalary = netSalary;
+        this.totalAmount = totalAmount;
+        this.benefits = benefits;
+        this.taxes = taxes;
     }
     
     public Long getId() {
@@ -25,14 +35,6 @@ public class PayrollRaportDto {
     
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public LocalDate getDate() {
-        return date;
-    }
-    
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
     
     public Float getBonus() {
@@ -57,5 +59,45 @@ public class PayrollRaportDto {
 
     public void setEmployeeId(Long emloyeeId) {
         this.employeeId = emloyeeId;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    public Float getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Float totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public List<Benefit> getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(List<Benefit> benefits) {
+        this.benefits = benefits;
+    }
+
+    public List<TaxDto> getTaxes() {
+        return taxes;
+    }
+
+    public void setTaxes(List<TaxDto> taxes) {
+        this.taxes = taxes;
     }
 }
