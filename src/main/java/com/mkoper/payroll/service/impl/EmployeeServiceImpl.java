@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.EmployeeDto;
 import com.mkoper.payroll.dto.PositionDto;
-import com.mkoper.payroll.exceptions.DepartmentNotFoundException;
-import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
-import com.mkoper.payroll.exceptions.PositionNotFoundException;
+import com.mkoper.payroll.exceptions.InvalidDataGivenException;
+import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Employee;
 import com.mkoper.payroll.model.Position;
 import com.mkoper.payroll.repository.EmployeeRepository;
@@ -46,23 +45,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getEmployeeById(Long employeeId) {
-        return mapToEmployeeDto(employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
+        return mapToEmployeeDto(employeeRepository.findById(employeeId).orElseThrow(() -> new ObjectNotFoundException("Employee could not be found!")));
     }
 
     @Override
     public List<EmployeeDto> getEmployeesByPositionId(Long positionId) {
         
-        List<Employee> employees = employeeRepository.findByJobPosition(positionRepository.findById(positionId).orElseThrow(() -> new PositionNotFoundException("Position could not be found!")));
+        List<Employee> employees = employeeRepository.findByJobPosition(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
         return employees.stream().map((employee) -> mapToEmployeeDto(employee)).collect(Collectors.toList());
     }
 
     @Override
     public EmployeeDto updateEmployee(EmployeeDto employeeDto) {
         if (employeeDto.getId() == null) {
-            throw new IllegalArgumentException("ID was not given!");
+            throw new InvalidDataGivenException("ID was not given!");
         }
 
-        Employee employee = employeeRepository.findById(employeeDto.getId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+        Employee employee = employeeRepository.findById(employeeDto.getId()).orElseThrow(() -> new ObjectNotFoundException("Employee could not be found!"));
 
         if(employeeDto.getDateOfBirth() != null) employee.setDateOfBirth(employeeDto.getDateOfBirth());
         if(employeeDto.getFirstName() != null) employee.setFirstName(employeeDto.getFirstName());
@@ -70,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(employeeDto.getEmail() != null) employee.setEmail(employeeDto.getEmail());
         if(employeeDto.getPhoneNumber() != null) employee.setPhoneNumber(employeeDto.getPhoneNumber());
         if(employeeDto.getJobPosition() != null) {
-            employee.setJobPosition(positionRepository.findByName(employeeDto.getJobPosition().getName()).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!")));
+            employee.setJobPosition(positionRepository.findByName(employeeDto.getJobPosition().getName()).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
         }
 
         Employee updatedEmployee = employeeRepository.save(employee);
@@ -80,16 +79,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee saveEmployee(Employee employee) {
         if (employee.getJobPosition() == null) 
-            throw new IllegalArgumentException("Job position was not given!");
+            throw new InvalidDataGivenException("Job position was not given!");
         if (employee.getJoinDate() == null) employee.setJoinDate(LocalDate.now());
         
-        employee.setJobPosition(positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new PositionNotFoundException("Position could not be found!")));
+        employee.setJobPosition(positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
         return employeeRepository.save(employee);
     }
 
     @Override
     public void deleteEmployeeId(Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Employee could not be found!"));
 
         // delete all payroll raports and user
         payrollRaportService.deleteByEmployeeId(id);
@@ -109,7 +108,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeDto.setPhoneNumber(employee.getPhoneNumber());
         employeeDto.setJoinDate(employee.getJoinDate());
 
-        Position position = positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!"));
+        Position position = positionRepository.findByName(employee.getJobPosition().getName()).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!"));
         employeeDto.setJobPosition(mapToPosiotionDto(position));
 
         return employeeDto;

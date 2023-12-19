@@ -10,6 +10,7 @@ public class PayrollRaportDto {
     private Integer year;
     private Integer month;
     private Integer hoursWorked;
+    private Float wage;
     private Float bonus;
     private Float netSalary;
     private Float totalAmount;
@@ -18,12 +19,13 @@ public class PayrollRaportDto {
     
     public PayrollRaportDto() {}
     
-    public PayrollRaportDto(Long id, Long employeeId, Integer year, Integer month, Integer hoursWorked, Float bonus, Float netSalary, Float totalAmount, List<Benefit> benefits, List<TaxDto> taxes) {
+    public PayrollRaportDto(Long id, Long employeeId, Integer year, Integer month, Integer hoursWorked, Float wage, Float bonus, Float netSalary, Float totalAmount, List<Benefit> benefits, List<TaxDto> taxes) {
         this.id = id;
         this.employeeId = employeeId;
         this.year = year;
         this.month = month;
         this.hoursWorked = hoursWorked;
+        this.wage = wage;
         this.bonus = bonus;
         this.netSalary = netSalary;
         this.totalAmount = totalAmount;
@@ -109,5 +111,13 @@ public class PayrollRaportDto {
 
     public void setHoursWorked(Integer hoursWorked) {
         this.hoursWorked = hoursWorked;
+    }
+
+    public Float getWage() {
+        return wage;
+    }
+
+    public void setWage(Float wage) {
+        this.wage = wage;
     }
 }

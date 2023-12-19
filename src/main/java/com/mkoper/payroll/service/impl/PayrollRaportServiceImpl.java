@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import com.mkoper.payroll.dto.DateDto;
 import com.mkoper.payroll.dto.PayrollRaportDto;
 import com.mkoper.payroll.dto.TaxDto;
-import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
-import com.mkoper.payroll.exceptions.PayrollRaportNotFoundException;
-import com.mkoper.payroll.exceptions.WorkingLogNotFoundException;
+import com.mkoper.payroll.exceptions.InvalidDataGivenException;
+import com.mkoper.payroll.exceptions.LastMonthRaportExistsException;
+import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Benefit;
 import com.mkoper.payroll.model.PayrollRaport;
 import com.mkoper.payroll.model.Tax;
@@ -58,19 +58,24 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
     public PayrollRaportDto savePayrollRaportForEmployee(PayrollRaportDto payrollRaportDto) {
         // check if payroll raport for given month already exists
         if (payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 28), payrollRaportDto.getEmployeeId()).size() != 0) {;
-            throw new IllegalArgumentException("Payroll raport already exists!");
+            throw new LastMonthRaportExistsException("Payroll raport already exists!");
         }
 
         if (payrollRaportDto.getMonth() == null || payrollRaportDto.getYear() == null) {
-            throw new IllegalArgumentException("Date was not given!");
+            throw new InvalidDataGivenException("Date was not given!");
         }
 
         PayrollRaport payrollRaport = new PayrollRaport();
 
-        payrollRaport.setEmployee(employeeRepository.findById(payrollRaportDto.getEmployeeId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
+        payrollRaport.setEmployee(employeeRepository.findById(payrollRaportDto.getEmployeeId()).orElseThrow(() -> new ObjectNotFoundException("Employee could not be found!")));
         payrollRaport.setSalary(payrollRaport.getEmployee().getSalary());
         payrollRaport.setDate(LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1));
-        payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(payrollRaport.getDate(), payrollRaport.getDate(), payrollRaport.getEmployee().getId()).get(0));
+
+        try {
+            payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(payrollRaport.getDate(), payrollRaport.getDate(), payrollRaport.getEmployee().getId()).get(0));
+        } catch (Exception e) {
+            throw new ObjectNotFoundException("Could not find working log for employee!");
+        }
 
         payrollRaport.setBonus(calculateBonus(payrollRaport));
         payrollRaport.setTotalAmount(calculateTotalAmount(payrollRaport));
@@ -90,7 +95,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
 
         // check if payroll raport for given month already exists
         if (payrollRaportRepository.findByDateBetween(currentMonth, currentMonth).size() != 0) {
-            throw new IllegalArgumentException("Payroll raports already exist!");
+            throw new LastMonthRaportExistsException("Payroll raports already exist!");
         }
         
         if (date.getMonth() == 1) lastMonthDate = LocalDate.of(date.getYear() - 1, 12, 1);
@@ -105,10 +110,11 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
             payrollRaport.setSalary(lastMonthRaport.getSalary());
             payrollRaport.setDate(currentMonth);
 
-            if (workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, payrollRaport.getEmployee().getId()).isEmpty()) {
-                throw new WorkingLogNotFoundException("Working log for employee " + payrollRaport.getEmployee().getId() + " could not be found!");
+            try {
+                payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, payrollRaport.getEmployee().getId()).get(0));
+            } catch (Exception e) {
+                throw new ObjectNotFoundException("Working log for employee " + payrollRaport.getEmployee().getId() + " could not be found!");
             }
-            payrollRaport.setWorkingLog(workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, payrollRaport.getEmployee().getId()).get(0));
             
             payrollRaport.setBonus(calculateBonus(payrollRaport));
             payrollRaport.setTotalAmount(calculateTotalAmount(payrollRaport));
@@ -127,11 +133,11 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
 
     public PayrollRaportDto updatePayrollRaport(PayrollRaportDto payrollRaportDto) {
         if (payrollRaportDto.getEmployeeId() == null) {
-            throw new IllegalArgumentException("Employee ID was not given!");
+            throw new InvalidDataGivenException("Employee ID was not given!");
         }
 
         if (payrollRaportDto.getMonth() == null || payrollRaportDto.getYear() == null) {
-            throw new IllegalArgumentException("Date was not given!");
+            throw new InvalidDataGivenException("Date was not given!");
         }
         
         // get payroll raport
@@ -140,7 +146,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         try {
             oldPayrollRaport = payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), LocalDate.of(payrollRaportDto.getYear(), payrollRaportDto.getMonth(), 1), payrollRaportDto.getEmployeeId()).get(0);
         } catch (Exception e) {
-            throw new PayrollRaportNotFoundException("Payroll raport was not found!");
+            throw new ObjectNotFoundException("Payroll raport was not found!");
         }
 
         PayrollRaport newPayrollRaport = new PayrollRaport();
@@ -173,7 +179,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         try {
             payrollRaport = payrollRaportRepository.findByDateBetweenAndEmployeeId(LocalDate.of(dateDto.getYear(), dateDto.getMonth(), 1), LocalDate.of(dateDto.getYear(), dateDto.getMonth(), 1), employeeId).get(0);
         } catch (Exception e) {
-            throw new PayrollRaportNotFoundException("Payroll raport could not be found!");
+            throw new ObjectNotFoundException("Payroll raport could not be found!");
         }
 
         payrollRaportRepository.delete(payrollRaport);
@@ -195,6 +201,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         payrollRaportDto.setYear(payrollRaport.getDate().getYear());
         payrollRaportDto.setMonth(payrollRaport.getDate().getMonthValue());
         payrollRaportDto.setHoursWorked(payrollRaport.getWorkingLog().getHoursWorked());
+        payrollRaportDto.setWage(payrollRaport.getSalary().getHourlyWage());
         payrollRaportDto.setBonus(payrollRaport.getBonus());
         payrollRaportDto.setNetSalary(payrollRaport.getNetSalary());
         payrollRaportDto.setBonus(payrollRaport.getBonus());

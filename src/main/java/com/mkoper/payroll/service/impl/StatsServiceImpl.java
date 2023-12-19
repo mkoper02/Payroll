@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.DateDto;
 import com.mkoper.payroll.dto.StatsDto;
+import com.mkoper.payroll.exceptions.InvalidDataGivenException;
 import com.mkoper.payroll.model.PayrollRaport;
 import com.mkoper.payroll.repository.PayrollRaportRepository;
 import com.mkoper.payroll.service.StatsService;
@@ -24,7 +25,7 @@ public class StatsServiceImpl implements StatsService {
 
     public List<StatsDto> getStats(DateDto dateDto) {
         if (dateDto.getYear() == null) {
-            throw new IllegalArgumentException("Date was not given!");
+            throw new InvalidDataGivenException("Date was not given!");
         }
 
         List<PayrollRaport> payrollRaports = new ArrayList<>();

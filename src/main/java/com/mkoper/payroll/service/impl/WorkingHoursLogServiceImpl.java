@@ -10,8 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.DateDto;
 import com.mkoper.payroll.dto.WorkingHoursLogDto;
-import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
-import com.mkoper.payroll.exceptions.WorkingLogNotFoundException;
+import com.mkoper.payroll.exceptions.InvalidDataGivenException;
+import com.mkoper.payroll.exceptions.LastMonthRaportExistsException;
+import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.WorkingHoursLog;
 import com.mkoper.payroll.repository.EmployeeRepository;
 import com.mkoper.payroll.repository.WorkingHoursLogRepository;
@@ -44,16 +45,16 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
     public WorkingHoursLogDto saveWorkingLogForEmployee(WorkingHoursLogDto workingHoursLogDto) {
         // check if worklog for given month already exists
         if (workingHoursLogRepository.findByDateBetweenAndEmployeeId(LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1), LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 28), workingHoursLogDto.getEmployeeId()).size() != 0) {;
-            throw new IllegalArgumentException("Working log already exists!");
+            throw new LastMonthRaportExistsException("Working log already exists!");
         }
 
         if(workingHoursLogDto.getMonth() == null || workingHoursLogDto.getYear() == null) {
-            throw new IllegalArgumentException("Date was not given!");
+            throw new InvalidDataGivenException("Date was not given!");
         }
 
         WorkingHoursLog workingHoursLog = new WorkingHoursLog();
 
-        workingHoursLog.setEmployee(employeeRepository.findById(workingHoursLogDto.getEmployeeId()).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!")));
+        workingHoursLog.setEmployee(employeeRepository.findById(workingHoursLogDto.getEmployeeId()).orElseThrow(() -> new ObjectNotFoundException("Employee could not be found!")));
         workingHoursLog.setHoursWorked(workingHoursLogDto.getHoursWorked());
         workingHoursLog.setPayrollRaport(null);
         workingHoursLog.setDate(LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1));
@@ -69,7 +70,7 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
 
         // check if worklog for given month already exists
         if (workingHoursLogRepository.findByDateBetween(currentMonth, currentMonth).size() != 0) {;
-            throw new IllegalArgumentException("Working logs already exist!");
+            throw new LastMonthRaportExistsException("Working logs already exist!");
         }
         
         if (date.getMonth() == 1) lastMonthDate = LocalDate.of(date.getYear() - 1, 12, 1);
@@ -96,14 +97,19 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
     @Override
     public WorkingHoursLogDto updateWorkLog(WorkingHoursLogDto workingHoursLogDto) {
         if (workingHoursLogDto.getEmployeeId() == null) {
-            throw new IllegalArgumentException("Employee ID was not given!");
+            throw new InvalidDataGivenException("Employee ID was not given!");
         }
 
         if (workingHoursLogDto.getMonth() == null || workingHoursLogDto.getYear() == null) {
-            throw new IllegalArgumentException("Date was not given!");
+            throw new InvalidDataGivenException("Date was not given!");
         }
 
-        WorkingHoursLog workingHoursLog = workingHoursLogRepository.findByDateBetweenAndEmployeeId(LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1), LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1), workingHoursLogDto.getEmployeeId()).get(0);
+        WorkingHoursLog workingHoursLog;
+        try {
+            workingHoursLog = workingHoursLogRepository.findByDateBetweenAndEmployeeId(LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1), LocalDate.of(workingHoursLogDto.getYear(), workingHoursLogDto.getMonth(), 1), workingHoursLogDto.getEmployeeId()).get(0);
+        } catch (Exception e) {
+            throw new ObjectNotFoundException("Could not found last month working log!");
+        }
 
         workingHoursLog.setHoursWorked(workingHoursLogDto.getHoursWorked());
 
@@ -112,7 +118,7 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
 
     @Override
     public void deleteWorkingLog(Long workingLogId) {
-        workingHoursLogRepository.delete(workingHoursLogRepository.findById(workingLogId).orElseThrow(() -> new WorkingLogNotFoundException("Working log could not be found!")));
+        workingHoursLogRepository.delete(workingHoursLogRepository.findById(workingLogId).orElseThrow(() -> new ObjectNotFoundException("Working log could not be found!")));
     }
 
     private WorkingHoursLogDto mapToWorkingHoursLogDto(WorkingHoursLog workingLog) {

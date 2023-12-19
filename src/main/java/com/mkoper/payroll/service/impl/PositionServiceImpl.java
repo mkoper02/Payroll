@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.PositionDto;
-import com.mkoper.payroll.exceptions.DepartmentNotFoundException;
-import com.mkoper.payroll.exceptions.EmployeeNotFoundException;
-import com.mkoper.payroll.exceptions.PositionNotFoundException;
+import com.mkoper.payroll.exceptions.InvalidDataGivenException;
+import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Employee;
 import com.mkoper.payroll.model.Position;
 import com.mkoper.payroll.repository.DepartmentRepository;
@@ -38,23 +37,23 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public List<PositionDto> getByDepartmentId(Long departmentId) {
-        List<Position> positions = positionRepository.findByDepartment(departmentRepository.findById(departmentId).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+        List<Position> positions = positionRepository.findByDepartment(departmentRepository.findById(departmentId).orElseThrow(() -> new ObjectNotFoundException("Department could not be found!")));
         return positions.stream().map((position) -> mapToPosiotionDto(position)).collect(Collectors.toList());
     }
 
     @Override
     public PositionDto getByPositionId(Long positionId) {
-        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new DepartmentNotFoundException("Position could not be found!")));
+        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
     }
 
     @Override
     public PositionDto getByPositionName(String positionName) {
-        return mapToPosiotionDto(positionRepository.findByName(positionName).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+        return mapToPosiotionDto(positionRepository.findByName(positionName).orElseThrow(() -> new ObjectNotFoundException("Department could not be found!")));
     }
 
     @Override
     public PositionDto getByEmployeeId(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new EmployeeNotFoundException("Employee could not be found!"));
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new ObjectNotFoundException("Employee could not be found!"));
         Position position = positionRepository.findById(employee.getJobPosition().getId()).get();
 
         return mapToPosiotionDto(position);
@@ -63,13 +62,13 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public PositionDto updatePosition(PositionDto posiotionDto) {
         if (posiotionDto.getId() == null) {
-            throw new IllegalArgumentException("Position ID was not given!");
+            throw new InvalidDataGivenException("Position ID was not given!");
         }
 
-        Position position = positionRepository.findById(posiotionDto.getId()).orElseThrow(() -> new PositionNotFoundException("Position could not be found!"));
+        Position position = positionRepository.findById(posiotionDto.getId()).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!"));
 
         if (posiotionDto.getDepartmentName() != null) 
-            position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+            position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new ObjectNotFoundException("Department could not be found!")));
         if (posiotionDto.getName() != null) position.setName(posiotionDto.getName());
 
         return mapToPosiotionDto(positionRepository.save(position));
@@ -78,15 +77,15 @@ public class PositionServiceImpl implements PositionService {
     @Override
     public Position savePosition(Position position) {
         if (position.getDepartment() == null) 
-            throw new IllegalArgumentException("Department  was not given!");
+            throw new InvalidDataGivenException("Department  was not given!");
 
-        position.setDepartment(departmentRepository.findByName(position.getDepartment().getName()).orElseThrow(() -> new DepartmentNotFoundException("Department could not be found!")));
+        position.setDepartment(departmentRepository.findByName(position.getDepartment().getName()).orElseThrow(() -> new ObjectNotFoundException("Department could not be found!")));
         return positionRepository.save(position);
     }
 
     @Override
     public void deletePosition(Long positionId) {
-        positionRepository.delete(positionRepository.findById(positionId).orElseThrow(() -> new PositionNotFoundException("Position could not be found!")));
+        positionRepository.delete(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
     }
     
     private PositionDto mapToPosiotionDto(Position position) {

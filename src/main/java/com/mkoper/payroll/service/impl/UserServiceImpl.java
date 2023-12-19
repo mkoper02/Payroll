@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.UserDto;
-import com.mkoper.payroll.exceptions.UserNotFoundException;
+import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Role;
 import com.mkoper.payroll.model.UserEntity;
 import com.mkoper.payroll.repository.UserRepository;
@@ -31,13 +31,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        UserEntity user = userRepository.findByEmployeeId(userId).orElseThrow(() -> new UserNotFoundException("User could not be found!"));
+        UserEntity user = userRepository.findByEmployeeId(userId).orElseThrow(() -> new ObjectNotFoundException("User could not be found!"));
         return mapToUserDto(user);
     }
 
     @Override
     public UserDto getUserByUsername(String username) {
-        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User could not be found!"));
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new ObjectNotFoundException("User could not be found!"));
         return mapToUserDto(user);
     }
     

@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.SalaryDto;
-import com.mkoper.payroll.exceptions.SalaryNotFoundException;
+import com.mkoper.payroll.exceptions.InvalidDataGivenException;
+import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Salary;
 import com.mkoper.payroll.repository.EmployeeRepository;
 import com.mkoper.payroll.repository.SalaryRepository;
@@ -32,17 +33,17 @@ public class SalaryServiceImpl implements SalaryService {
 
     @Override
     public SalaryDto getByEmployeeId(Long employeeId) {
-        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new SalaryNotFoundException("Salary could not be found!"));
+        Salary salary = salaryRepository.findById(employeeId).orElseThrow(() -> new ObjectNotFoundException("Salary could not be found!"));
         return mapToSalaryDto(salary);
     }
 
     @Override
     public SalaryDto updateSalary(SalaryDto salaryDto) {
         if (salaryDto.getEmployeeId() == null) {
-            throw new IllegalArgumentException("ID was not given!");
+            throw new InvalidDataGivenException("ID was not given!");
         }
 
-        Salary salary = salaryRepository.findById(salaryDto.getEmployeeId()).orElseThrow(() -> new SalaryNotFoundException("Salary could not be found!"));
+        Salary salary = salaryRepository.findById(salaryDto.getEmployeeId()).orElseThrow(() -> new ObjectNotFoundException("Salary could not be found!"));
 
         if (salaryDto.getHourlWage() != null) salary.setHourlyWage(salaryDto.getHourlWage());
         if (salaryDto.getHours() != null) salary.setHours(salaryDto.getHours());
@@ -57,19 +58,19 @@ public class SalaryServiceImpl implements SalaryService {
             throw new IllegalArgumentException("Salary for this employee already exists!");
 
         if (salary.getHourlyWage() == null) 
-            throw new IllegalArgumentException("Wage was not given!");
+            throw new InvalidDataGivenException("Wage was not given!");
 
         if (validContractType(salary.getContractType())) {
-            salary.setEmployee(employeeRepository.findById(salary.getId()).orElseThrow(() -> new SalaryNotFoundException("Salary could not be found!")));
+            salary.setEmployee(employeeRepository.findById(salary.getId()).orElseThrow(() -> new ObjectNotFoundException("Salary could not be found!")));
             return salaryRepository.save(salary);
         }
         
-        throw new IllegalArgumentException("Invalid contract type");
+        throw new InvalidDataGivenException("Invalid contract type");
     }
 
     @Override
     public void deleteSalary(Long employeeId) {
-        salaryRepository.delete(salaryRepository.findById(employeeId).orElseThrow(() -> new SalaryNotFoundException("Salary could not be found!")));
+        salaryRepository.delete(salaryRepository.findById(employeeId).orElseThrow(() -> new ObjectNotFoundException("Salary could not be found!")));
     }
 
     private SalaryDto mapToSalaryDto(Salary salary) {
