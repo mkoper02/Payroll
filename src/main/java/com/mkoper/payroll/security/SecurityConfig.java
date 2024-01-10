@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired private JwtAuthEntryPoint authEntryPoint;
@@ -33,11 +35,8 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests((authorize) -> 
-                authorize.requestMatchers( "/auth/login").permitAll()
-                        .requestMatchers("**").permitAll()
-                    // .requestMatchers("/auth/register").hasRole("ADMIN")
-                    // .requestMatchers("/employee").hasRole("ADMIN")
-                    // .requestMatchers("/employee/**").hasAnyRole("ADMIN", "MODERATOR", "USER")
+                    authorize.requestMatchers( "/auth/login").permitAll()
+                    // .requestMatchers("**").permitAll()
                     .anyRequest()
                     .authenticated())
             .httpBasic(Customizer.withDefaults());

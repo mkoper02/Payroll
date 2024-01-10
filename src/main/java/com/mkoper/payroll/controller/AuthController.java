@@ -7,10 +7,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +34,7 @@ import com.mkoper.payroll.service.UserService;
 
 @RestController
 @RequestMapping("auth")
+@CrossOrigin
 public class AuthController {
     
     @Autowired private AuthenticationManager authenticationManager;
@@ -53,7 +57,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("login")
+    @GetMapping("login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -63,6 +67,7 @@ public class AuthController {
     }
 
     @PostMapping("register")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
         if(userRepository.existsByUsername(registerDto.getUsername())) {
             return new ResponseEntity<>("Username is taken!", HttpStatus.BAD_REQUEST);
@@ -100,21 +105,15 @@ public class AuthController {
             registerDto.getRole().forEach(role -> {
                 switch (role.toLowerCase()) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName("ADMIN").get();
-                        roles.add(adminRole);
-
+                        roles.add(roleRepository.findByName("ADMIN").get());
                         break;
 
-                    case "moderator":
-                        Role moderatorRole = roleRepository.findByName("MODERATOR").get();
-                        roles.add(moderatorRole);
-
-                        break;
+                    // case "moderator":
+                    //     roles.add(roleRepository.findByName("MODERATOR").get());
+                    //     break;
                 
                     default:
-                        Role userRole = roleRepository.findByName("USER").get();
-                        roles.add(userRole);
-
+                        roles.add(roleRepository.findByName("USER").get());
                         break;
                 }
             });

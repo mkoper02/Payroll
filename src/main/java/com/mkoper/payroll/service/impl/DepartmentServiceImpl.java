@@ -42,7 +42,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto updateDepartment(DepartmentDto departmentDto) {
         if (departmentDto.getId() == null) {
-            throw new InvalidDataGivenException("ID was not given!");
+            throw new InvalidDataGivenException("ID was not given!"); 
         }
         
         Department department = departmentRepository.findById(departmentDto.getId()).orElseThrow(() -> new ObjectNotFoundException("Department could not be found!"));

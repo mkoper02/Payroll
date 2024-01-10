@@ -92,11 +92,6 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         // get last month
         LocalDate lastMonthDate;
         LocalDate currentMonth = LocalDate.of(date.getYear(), date.getMonth(), 1);
-
-        // check if payroll raport for given month already exists
-        if (payrollRaportRepository.findByDateBetween(currentMonth, currentMonth).size() != 0) {
-            throw new LastMonthRaportExistsException("Payroll raports already exist!");
-        }
         
         if (date.getMonth() == 1) lastMonthDate = LocalDate.of(date.getYear() - 1, 12, 1);
         else lastMonthDate = LocalDate.of(date.getYear(), date.getMonth() - 1, 1);
@@ -104,6 +99,11 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         List<PayrollRaportDto> payrollRaports = new ArrayList<>();
         
         for (PayrollRaport lastMonthRaport :  payrollRaportRepository.findByDateBetween(lastMonthDate, currentMonth)) {
+            // check if payroll raport for given employee already exist
+            if (workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, lastMonthRaport.getEmployee().getId()).size() != 0) {
+                continue;
+            }
+
             PayrollRaport payrollRaport = new PayrollRaport();
             
             payrollRaport.setEmployee(lastMonthRaport.getEmployee());

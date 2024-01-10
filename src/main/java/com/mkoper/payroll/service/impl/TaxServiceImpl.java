@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mkoper.payroll.dto.TaxDto;
 import com.mkoper.payroll.exceptions.InvalidDataGivenException;
 import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Tax;
@@ -24,6 +25,11 @@ public class TaxServiceImpl implements TaxService {
     @Override
     public List<Tax> getAll() {
         return taxRepository.findAll();
+    }
+
+    @Override
+    public TaxDto getTaxById(Long taxId) {
+        return mapToTaxDto(taxRepository.findById(taxId).orElseThrow(() -> new ObjectNotFoundException("Tax could not be found!")));
     }
 
     @Override
@@ -49,5 +55,14 @@ public class TaxServiceImpl implements TaxService {
     public void deleteTax(Long taxId) {
         Tax tax = taxRepository.findById(taxId).orElseThrow(() -> new ObjectNotFoundException("Tax with given ID could not be found!"));
         taxRepository.delete(tax);
+    }
+
+    private TaxDto mapToTaxDto(Tax tax) {
+        TaxDto taxDto = new TaxDto();
+
+        taxDto.setName(tax.getName());
+        taxDto.setAmount(tax.getCost());
+
+        return taxDto;
     }
 }

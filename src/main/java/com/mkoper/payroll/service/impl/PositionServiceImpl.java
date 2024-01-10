@@ -43,7 +43,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public PositionDto getByPositionId(Long positionId) {
-        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
+        return mapToPosiotionDto(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Job position could not be found!")));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class PositionServiceImpl implements PositionService {
             throw new InvalidDataGivenException("Position ID was not given!");
         }
 
-        Position position = positionRepository.findById(posiotionDto.getId()).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!"));
+        Position position = positionRepository.findById(posiotionDto.getId()).orElseThrow(() -> new ObjectNotFoundException("Job position could not be found!"));
 
         if (posiotionDto.getDepartmentName() != null) 
             position.setDepartment(departmentRepository.findByName(posiotionDto.getDepartmentName()).orElseThrow(() -> new ObjectNotFoundException("Department could not be found!")));
@@ -85,7 +85,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public void deletePosition(Long positionId) {
-        positionRepository.delete(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Position could not be found!")));
+        positionRepository.delete(positionRepository.findById(positionId).orElseThrow(() -> new ObjectNotFoundException("Job position could not be found!")));
     }
     
     private PositionDto mapToPosiotionDto(Position position) {

@@ -67,12 +67,7 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
         // get last month
         LocalDate lastMonthDate;
         LocalDate currentMonth = LocalDate.of(date.getYear(), date.getMonth(), 1);
-
-        // check if worklog for given month already exists
-        if (workingHoursLogRepository.findByDateBetween(currentMonth, currentMonth).size() != 0) {;
-            throw new LastMonthRaportExistsException("Working logs already exist!");
-        }
-        
+      
         if (date.getMonth() == 1) lastMonthDate = LocalDate.of(date.getYear() - 1, 12, 1);
         else lastMonthDate = LocalDate.of(date.getYear(), date.getMonth() - 1, 1);
 
@@ -80,6 +75,11 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
         List<WorkingHoursLogDto> workingHoursLogsDto = new ArrayList<>();
 
         for (WorkingHoursLog lastMonthLog : workingHoursLogs) {
+            // check if worklog for given employee already exist
+            if (workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, lastMonthLog.getEmployee().getId()).size() != 0) {
+                continue;
+            }
+
             WorkingHoursLog newWorkingHoursLog = new WorkingHoursLog();
 
             newWorkingHoursLog.setEmployee(lastMonthLog.getEmployee());

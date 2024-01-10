@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mkoper.payroll.dto.BenefitDto;
 import com.mkoper.payroll.exceptions.InvalidDataGivenException;
 import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.Benefit;
@@ -24,6 +25,11 @@ public class BenefitServiceImpl implements BenefitService {
     @Override
     public List<Benefit> getAll() {
         return benefitRepository.findAll();
+    }
+
+    @Override
+    public BenefitDto getBenefitById(Long benefitId) {
+        return mapToBenefitDto(benefitRepository.findById(benefitId).orElseThrow(() -> new ObjectNotFoundException("Benefit could not be found!")));
     }
 
     @Override
@@ -51,4 +57,13 @@ public class BenefitServiceImpl implements BenefitService {
         benefitRepository.delete(benefit);
     }
     
+    private BenefitDto mapToBenefitDto(Benefit benefit) {
+        BenefitDto benefitDto = new BenefitDto();
+
+        benefitDto.setName(benefit.getName());
+        benefitDto.setCost(benefit.getCost());
+
+        return benefitDto;
+    }
+
 }
