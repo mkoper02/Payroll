@@ -100,7 +100,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         
         for (PayrollRaport lastMonthRaport :  payrollRaportRepository.findByDateBetween(lastMonthDate, currentMonth)) {
             // check if payroll raport for given employee already exist
-            if (workingHoursLogRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, lastMonthRaport.getEmployee().getId()).size() != 0) {
+            if (payrollRaportRepository.findByDateBetweenAndEmployeeId(currentMonth, currentMonth, lastMonthRaport.getEmployee().getId()).size() != 0) {
                 continue;
             }
 
@@ -159,10 +159,20 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         // update bonus
         if (payrollRaportDto.getBonus() != null) {
             newPayrollRaport.setBonus(payrollRaportDto.getBonus());
-            newPayrollRaport.setTotalAmount(oldPayrollRaport.getTotalAmount() + newPayrollRaport.getBonus());
+            newPayrollRaport.setTotalAmount(calculateTotalAmount(newPayrollRaport) + newPayrollRaport.getBonus());
         }
 
-        newPayrollRaport.setPayrollraportBenefits(createBenefitList(payrollRaportDto));
+        else {
+            newPayrollRaport.setBonus(oldPayrollRaport.getBonus());
+            newPayrollRaport.setTotalAmount(calculateTotalAmount(newPayrollRaport));
+        }
+
+        if (payrollRaportDto.getBenefits() != null) 
+            newPayrollRaport.setPayrollraportBenefits(createBenefitList(payrollRaportDto));
+        
+        else 
+            newPayrollRaport.setPayrollraportBenefits(oldPayrollRaport.getPayrollraportBenefits());
+
         newPayrollRaport.setPayrollraportTaxes(creareTaxList(newPayrollRaport));
 
         newPayrollRaport.setNetSalary(calculateNetSalary(newPayrollRaport));

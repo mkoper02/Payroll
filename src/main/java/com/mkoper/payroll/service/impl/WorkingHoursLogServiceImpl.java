@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mkoper.payroll.dto.DateDto;
+import com.mkoper.payroll.dto.PayrollRaportDto;
 import com.mkoper.payroll.dto.WorkingHoursLogDto;
 import com.mkoper.payroll.exceptions.InvalidDataGivenException;
 import com.mkoper.payroll.exceptions.LastMonthRaportExistsException;
@@ -16,6 +17,7 @@ import com.mkoper.payroll.exceptions.ObjectNotFoundException;
 import com.mkoper.payroll.model.WorkingHoursLog;
 import com.mkoper.payroll.repository.EmployeeRepository;
 import com.mkoper.payroll.repository.WorkingHoursLogRepository;
+import com.mkoper.payroll.service.PayrollRaportService;
 import com.mkoper.payroll.service.WorkingHoursLogService;
 
 @Service
@@ -23,10 +25,12 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
 
     @Autowired private WorkingHoursLogRepository workingHoursLogRepository;
     @Autowired private EmployeeRepository employeeRepository;
+    @Autowired private PayrollRaportService payrollRaportService;
 
-    public WorkingHoursLogServiceImpl(WorkingHoursLogRepository workingHoursLogRepository, EmployeeRepository employeeRepository) {
+    public WorkingHoursLogServiceImpl(WorkingHoursLogRepository workingHoursLogRepository, EmployeeRepository employeeRepository, PayrollRaportService payrollRaportService) {
         this.workingHoursLogRepository = workingHoursLogRepository;
         this.employeeRepository = employeeRepository;
+        this.payrollRaportService = payrollRaportService;
     }
 
     @Override
@@ -113,7 +117,14 @@ public class WorkingHoursLogServiceImpl implements WorkingHoursLogService {
 
         workingHoursLog.setHoursWorked(workingHoursLogDto.getHoursWorked());
 
-        return mapToWorkingHoursLogDto(workingHoursLogRepository.save(workingHoursLog));
+        WorkingHoursLogDto newWorkingLog = mapToWorkingHoursLogDto(workingHoursLogRepository.save(workingHoursLog));
+        
+        // update payroll raport from given raport if exists
+        try {
+            payrollRaportService.updatePayrollRaport(new PayrollRaportDto(null, newWorkingLog.getEmployeeId(), workingHoursLog.getDate().getYear(), workingHoursLog.getDate().getMonthValue(), null, null, null, null, null, null, null));
+        } catch (Exception e) {}
+
+        return newWorkingLog;
     } 
 
     @Override
