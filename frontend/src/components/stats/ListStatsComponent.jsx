@@ -4,9 +4,7 @@ import { Form, Tabs, Tab, Card } from "react-bootstrap";
 
 const ListStatsComponent = () => {
   const [tab, setTab] = useState("");
-  const [selectedYear, setSelectedYear] = useState(
-    new Date().getFullYear() - 1
-  );
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [stats, setStats] = useState([]);
 
@@ -42,9 +40,9 @@ const ListStatsComponent = () => {
   }, [selectedYear, selectedMonth, tab]);
 
   const renderYearOptions = () => {
-    const lastYear = new Date().getFullYear() - 1;
+    const lastYear = new Date().getFullYear();
     let yearOptions = [];
-    for (let i = lastYear; i >= 2000; i--) {
+    for (let i = lastYear; i >= 1970; i--) {
       yearOptions.push(
         <option key={i} value={i}>
           {i}
@@ -97,11 +95,7 @@ const ListStatsComponent = () => {
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
               >
-                {months.map((month, index) => (
-                  <option key={index} value={index + 1}>
-                    {month}
-                  </option>
-                ))}
+                {renderYearOptions()};
               </Form.Select>
             </Form.Group>
           </Form>
