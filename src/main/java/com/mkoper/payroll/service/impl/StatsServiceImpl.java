@@ -31,7 +31,7 @@ public class StatsServiceImpl implements StatsService {
         List<PayrollRaport> payrollRaports = new ArrayList<>();
         // get stats for given year
         if (dateDto.getMonth() == null) {
-            payrollRaports = payrollRaportRepository.findByDateBetween(LocalDate.of(dateDto.getYear(), 4, 1), LocalDate.of(dateDto.getYear(), 12, 31));;
+            payrollRaports = payrollRaportRepository.findByDateBetween(LocalDate.of(dateDto.getYear(), 1, 1), LocalDate.of(dateDto.getYear(), 12, 31));
         }
 
         // get stats for given month
