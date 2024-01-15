@@ -46,7 +46,7 @@ public class SalaryServiceImpl implements SalaryService {
         Salary salary = salaryRepository.findById(salaryDto.getEmployeeId()).orElseThrow(() -> new ObjectNotFoundException("Salary could not be found!"));
 
         if (salaryDto.getHourlWage() != null) salary.setHourlyWage(salaryDto.getHourlWage());
-        if (salaryDto.getHours() != null) salary.setHours(salaryDto.getHours());
+        if (salaryDto.getHours() != null) salary.setHours(salaryDto.getHours() * 4);
         if (salaryDto.getContractType() != null && validContractType(salaryDto.getContractType())) salary.setContractType(salaryDto.getContractType());
 
         return mapToSalaryDto(salaryRepository.save(salary));
@@ -59,6 +59,8 @@ public class SalaryServiceImpl implements SalaryService {
 
         if (salary.getHourlyWage() == null) 
             throw new InvalidDataGivenException("Wage was not given!");
+
+        salary.setHours(salary.getHours() * 4);
 
         if (validContractType(salary.getContractType())) {
             salary.setEmployee(employeeRepository.findById(salary.getId()).orElseThrow(() -> new ObjectNotFoundException("Salary could not be found!")));

@@ -159,7 +159,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         // update bonus
         if (payrollRaportDto.getBonus() != null) {
             newPayrollRaport.setBonus(payrollRaportDto.getBonus());
-            newPayrollRaport.setTotalAmount(calculateTotalAmount(newPayrollRaport) + newPayrollRaport.getBonus());
+            newPayrollRaport.setTotalAmount(calculateTotalAmount(newPayrollRaport));
         }
 
         else {
@@ -336,7 +336,7 @@ public class PayrollRaportServiceImpl implements PayrollRaportService {
         // check if employee is paid hourly or for full month
         if (payrollRaport.getSalary().getHours() != null) {
             // total amount (always asume that month has 4 weeks)
-            totalAmount = (payrollRaport.getWorkingLog().getHoursWorked() * payrollRaport.getSalary().getHourlyWage() * 4) + payrollRaport.getBonus();
+            totalAmount = (payrollRaport.getWorkingLog().getHoursWorked() * payrollRaport.getSalary().getHourlyWage()) + payrollRaport.getBonus();
         }
 
         else {
