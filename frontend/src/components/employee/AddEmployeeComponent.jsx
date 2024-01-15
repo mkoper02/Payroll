@@ -90,6 +90,7 @@ const AddEmployeeComponent = () => {
 
       const salaryPayload = {
         ...salary,
+        hourlyWage: parseFloat(salary.hourlyWage),
         id: employeeId,
       };
 
@@ -265,7 +266,7 @@ const AddEmployeeComponent = () => {
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridHours">
-                  <Form.Label>Liczba godzin</Form.Label>
+                  <Form.Label>Liczba godzin TYGODNIOWO</Form.Label>
                   <Form.Control
                     required
                     type="number"
@@ -281,7 +282,6 @@ const AddEmployeeComponent = () => {
                   <Form.Label>Stawka godzinowa</Form.Label>
                   <Form.Control
                     required
-                    type="number"
                     min="0"
                     name="hourlyWage"
                     value={salary.hourlyWage}

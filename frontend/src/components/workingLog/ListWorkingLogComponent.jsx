@@ -16,7 +16,7 @@ const ListWorkingLogComponent = () => {
 
   useEffect(() => {
     getWorkingLogs();
-  }, [employeeId]);
+  }, []);
 
   const logsByYear = workingLogs.reduce((acc, log) => {
     const year = log.year;
@@ -45,20 +45,6 @@ const ListWorkingLogComponent = () => {
       "Grudzień",
     ];
     return monthNames[monthNumber - 1];
-  };
-
-  const removeWorkingLog = (id) => {
-    const isConfirmed = window.confirm("Czy na pewno chcesz usunąć ten log?");
-    if (isConfirmed) {
-      try {
-        deleteWorkingLog(id)
-          .then((res) => getWorkingLogs())
-          .catch((err) => console.error(err));
-      } catch (err) {
-        alert(`Błąd podczas usuwania logu.`);
-        console.error(err);
-      }
-    }
   };
 
   return (
@@ -112,6 +98,9 @@ const ListWorkingLogComponent = () => {
           </Accordion.Item>
         </Accordion>
       ))}
+      {workingLogs.length === 0 && (
+        <p style={{ color: "black" }}>Brak logów do wyświetlenia.</p>
+      )}
     </section>
   );
 };

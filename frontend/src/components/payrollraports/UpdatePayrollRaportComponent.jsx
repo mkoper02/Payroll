@@ -8,7 +8,7 @@ const UpdatePayrollRaportComponent = () => {
   const { employeeId, month, year } = useParams();
 
   const navigator = useNavigate();
-
+  const [bonus, setBonus] = useState("");
   const numberEmployeeId = parseInt(employeeId, 10);
   const numberMonth = parseInt(month, 10);
   const numberYear = parseInt(year, 10);
@@ -19,8 +19,6 @@ const UpdatePayrollRaportComponent = () => {
     month: numberMonth,
     benefits: [],
   });
-
-  const [bonus, setBonus] = useState("");
 
   const [benefits, setBenefits] = useState([]);
 
@@ -59,7 +57,7 @@ const UpdatePayrollRaportComponent = () => {
     e.preventDefault();
     const postData = {
       ...payrollRaportData,
-      bonus,
+      bonus: parseFloat(bonus),
       benefits: payrollRaportData.benefits.map((name) => ({ name })),
     };
 
@@ -101,7 +99,6 @@ const UpdatePayrollRaportComponent = () => {
           <Form.Group as={Col} controlId="formGridBonus">
             <Form.Label>Bonus</Form.Label>
             <Form.Control
-              type="number"
               value={bonus}
               onChange={handleBonusChange}
               placeholder="Wpisz bonus (opcjonalnie)"

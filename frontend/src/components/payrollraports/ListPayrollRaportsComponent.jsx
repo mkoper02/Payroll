@@ -87,19 +87,35 @@ const ListPayrollRaportsComponent = () => {
                   </Accordion.Header>
                   <Accordion.Body>
                     Godziny: {raport.hoursWorked}, Wysokość bonusu:{" "}
-                    {parseInt(raport.bonus, 10)}zł{" "}
+                    {parseFloat(raport.bonus)}zł{" "}
                     {raport.benefits.length > 0 && (
                       <>
                         , Benefity:
                         <ul className="list-unstyled">
                           {raport.benefits.map((benefit) => (
-                            <li key={benefit.name}>{benefit.name}</li>
+                            <li key={benefit.name}>
+                              {benefit.name}: {benefit.cost}zł
+                            </li>
                           ))}
                         </ul>
                       </>
                     )}
+                    {raport.taxes.length > 0 && (
+                      <>
+                        , Podatki:
+                        <ul className="list-unstyled">
+                          {raport.taxes.map((tax) => (
+                            <li key={tax.name}>
+                              {" "}
+                              {tax.name}: {tax.amount.toFixed(2)}zł
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    <h3>Wypłata brutto: {raport.totalAmount.toFixed(2)}zł</h3>
                     <h3 style={{ fontWeight: "bold" }}>
-                      Wysokość wypłaty: {raport.netSalary}zł
+                      Wypłata netto: {raport.netSalary.toFixed(2)}zł
                     </h3>
                     <Button
                       style={{ margin: "10px" }}

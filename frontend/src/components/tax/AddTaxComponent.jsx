@@ -30,12 +30,9 @@ const AddTaxComponent = () => {
       await api.post("/tax/create", taxPayload);
       alert("Podatek został dodany pomyślnie");
       window.location.reload();
-
-      // Dodaj odpowiednie obsługi sukcesu
     } catch (error) {
       alert(`Błąd podczas tworzenia podatku`);
       console.error(error);
-      // Dodaj odpowiednie obsługi błędu
     }
   };
 

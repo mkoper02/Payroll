@@ -88,7 +88,7 @@ const UpdateEmployeeComponent = () => {
       const salaryPayload = {
         ...salary,
         employeeId: employeeId,
-        grossSalary: parseFloat(salary.hourlWage),
+        hourlyWage: parseFloat(salary.hourlWage),
       };
 
       await api.put("/employee/update", employeePayload);

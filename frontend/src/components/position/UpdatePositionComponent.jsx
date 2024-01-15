@@ -65,7 +65,7 @@ const UpdatePositionComponent = () => {
     try {
       const positionPayload = {
         ...positionData,
-        id: positionId, // Przekształcenie id na liczbę, jeśli jest potrzebne
+        id: positionId,
       };
 
       await api.put("/position/update", positionPayload);

@@ -65,6 +65,7 @@ const AddPayrollRaportComponent = () => {
     e.preventDefault();
     const postData = {
       ...payrollRaportData,
+      bonus: parseFloat(bonus),
       benefits: payrollRaportData.benefits.map((name) => ({ name })),
     };
 
@@ -106,7 +107,6 @@ const AddPayrollRaportComponent = () => {
           <Form.Group as={Col} controlId="formGridBonus">
             <Form.Label>Bonus</Form.Label>
             <Form.Control
-              type="number"
               value={bonus}
               onChange={handleBonusChange}
               placeholder="Wpisz bonus (opcjonalnie)"
