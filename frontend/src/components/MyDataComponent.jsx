@@ -192,6 +192,19 @@ const MyDataComponent = ({ id }) => {
                               </ul>
                             </>
                           )}
+                          {raport.taxes.length > 0 && (
+                            <>
+                              Podatki:
+                              <ul className="list-unstyled">
+                                {raport.taxes.map((tax) => (
+                                  <li key={tax.name}>
+                                    {" "}
+                                    {tax.name}: {tax.amount.toFixed(2)}zł
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          )}
                           <h3>
                             Wypłata brutto: {raport.totalAmount.toFixed(2)}zł
                           </h3>
